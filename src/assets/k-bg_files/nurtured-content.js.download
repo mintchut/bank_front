@@ -1,0 +1,185 @@
+﻿// Please ensure to have jQuery!
+(window.jQuery) && (function ($, undefined) {
+    function PageUtil_isInEditMode() {
+        var n = document.getElementById('MSOSPWebPartManager_DisplayModeName');
+        var v = n.value;
+        return (v === 'Edit' || v === 'Design') ? true : false;
+    }
+    function ComponentUtil_stripZeroWidthSpace(str) {
+        return str.replace(/\u200B/g, '');
+    }
+
+    function SetHilightBanner() {
+        var htmlSection = $('.section.section-html');
+        if (htmlSection.length) {
+            var htmlParam = htmlSection.find('.ms-hide:first-child'),
+                htmlBgImg = htmlParam.find('[data-banner] img').attr('src'),
+                htmlBgImgMobile = htmlParam.find('[data-bannermobile] img').attr('src'),
+                htmlHtml = htmlSection.find('[id$="RichHtmlField"].ms-rtestate-field');
+
+            htmlSection[0].outerHTML = ComponentUtil_stripZeroWidthSpace(htmlHtml.html().toString());
+            htmlHtml = $('.section-highlight.section-bg-fixed, .section.highlight-landing')
+            htmlHtml.find('.sc-bgimg').css('background-image', String.format("url('{0}')", htmlBgImg));
+
+            $(window).on('resize', function () {
+                // from media query
+                if ($(window).width() > 767) {
+                    htmlHtml.find('.sc-bgimg').css('background-image', String.format("url('{0}')", htmlBgImg));
+                } else {
+                    htmlHtml.find('.sc-bgimg').css('background-image', String.format("url('{0}')", htmlBgImgMobile));
+                }
+            });
+        } else {
+
+            var section = $('.section-highlight.section-bg-fixed, .section.highlight-landing'),
+                sectionTitle = section.find('.sc-category'),
+                source = section.find('.ms-hide:first-child'),
+            //source = section.next('.nurtured-HiddenFromView'),
+                bgImg = source.find('[data-banner] img').attr('src'),
+                bgImgMobile = source.find('[data-bannermobile] img').attr('src'),
+                titleColor = source.find('[data-bannertitlecolor]').text().trim().toLowerCase(),
+                textPos = source.find('[data-textposition]').text().trim().toLowerCase();
+
+            if (textPos !== 'left' && textPos !== '') {
+                if (/\w+\|\w+/.test(textPos)) {
+                    try {
+                        textPos = textPos.split('|');
+                        section.addClass(String.format('section-ct-v{0} section-ct-{1}',
+                            textPos[0] ? textPos[0] : 'null',
+                            textPos[1] ? textPos[1] : 'null'));
+                    } catch (ex) { }
+
+                } else {
+                    section.addClass(String.format('section-ct-vmiddle section-ct-{0}', textPos));
+                }
+            }
+            if (titleColor) {
+                sectionTitle.addClass(String.format('c-{0}', titleColor));
+            }
+
+            $(window).on('resize', function () {
+                // from media query
+                if ($(window).width() > 767) {
+                    section.find('.sc-bgimg').css('background-image', String.format("url('{0}')", bgImg));
+                } else {
+                    section.find('.sc-bgimg').css('background-image', String.format("url('{0}')", bgImgMobile));
+                }
+            });
+        }
+    }
+    function SetHilightLinkButton() {
+        $('#localnav-fixed .localnav-links.pull-right li:last-child > a').addClass('btn btn-xs btn-green').attr({ 'target': '_blank' });
+        $('.section-highlight .content-box .sc-action > a').addClass('btn btn-sm btn-block').attr({ 'target': '_blank' });
+    }
+    function SetTopNavigation() {
+        var source = $('.localnav.slicknav .ms-hide [id$="SummaryLinkFieldControl"] ul.dfwp-list li'),
+        //var source = $('.localnav.slicknav .nurtured-HiddenFromView [id$="SummaryLinkFieldControl"] ul.dfwp-list li'),
+            topNav = $('.localnav.slicknav .slicknav-menu'),
+            topLeft = $('.localnav.slicknav .h2.heading a');
+
+        if (source.length) {
+            var withBtn = topNav.find('.li-btn');
+
+            source.each(function (i, e) {
+                var $a = $(e).find('a');
+
+                var link = String.format('<li><a class="link" href="{0}" title="{1}">{1}</a></li>', $a.attr('href'), $a.text());
+
+                if (i === 0) {
+                    // Set first link as top link.
+                    topLeft.text($a.text()).attr('href', $a.attr('href'));
+                } else {
+                    if (withBtn.length) {
+                        withBtn.before(link);
+                    } else {
+                        topNav.append(link);
+                    }
+                }
+            });
+        }
+        topLeft.css("visibility", "visible");
+    }
+    function SetBottomNavigation() {
+        var source = $('.shortcutnav + .ms-hide [id$="SummaryLinkFieldControl"] ul.dfwp-list li'),
+            bottomNavBefore = $('.shortcutnav .shortcut-bottom .visible-w767'),
+            bottomNav = $('.shortcutnav .shortcut-bottom'),
+            useBefore = bottomNavBefore.length == 1;
+
+        if (source.length) {
+            source.each(function (i, e) {
+                var $a = $(e).find('a'),
+                    secondLine = $(e).find('.description').text();
+
+                /*
+                var link = secondLine ?
+                String.format('<li><a href="tel:{0}" title="{0}" class="phone"><i class="{1}"></i><span class="shortcut-title">{0}<span class="br"></span> {2}</span></a></li>', $a.text(), $a.attr('title'), secondLine) :
+                String.format('<li><a href="{0}" title="{1}"><i class="{2}"></i><span class="shortcut-title">{1}</span></a></li>', $a.attr('href'), $a.text(), $a.attr('title'));
+                */
+                var link = '';
+
+                var NewWindow =  ($a[0].outerHTML.indexOf('this.target') > -1) ? "target='_blank'":"";
+                if (secondLine) {
+                    if (secondLine.toLowerCase().startsWith('<br/>')) {
+                        link = String.format('<li><a href="{0}" {4} title="{1}"><i class="{2}"></i><span class="shortcut-title">{1}<span class="br"></span>{3}</span></a></li>', $a.attr('href'), $a.text(), $a.attr('title'), secondLine.split("<br/>")[1],NewWindow);
+                    }
+                    else {
+                        //link = String.format('<li><a href="tel:{0}" title="{0}" class="phone"><i class="{1}"></i><span class="shortcut-title">{0}<span class="br"></span> {2}</span></a></li>', $a.text(), $a.attr('title'), secondLine);
+                        if (($a.attr('title') == 'ic ic-phone-call')) {
+                            link = String.format('<li><a href="tel:{0}" title="{1}" class="phone"><i class="{1}"></i><span class="shortcut-title">{3}<span class="br"></span> {2}</span></a></li>', $a.attr('href').replace("#", ""), $a.attr('title'), secondLine, $a.text());
+                        } else if (($a.attr('title') == 'ic ic-k-expert-center')) {
+                            link = String.format('<li><a href="{0}" title="{1}" class="phone"><i class="{1}"></i><span class="shortcut-title">{3}<span class="br"></span> {2}</span></a></li>', $a.attr('href').replace("#", ""), $a.attr('title'), secondLine, $a.text());
+                        }else { link = String.format('<li><a href="tel:{0}" title="{1}" class="phone"><i class="{1}"></i><span class="shortcut-title">{3}<span class="br"></span> {2}</span></a></li>', secondLine, $a.attr('title'), secondLine, $a.text()); }
+                        
+                    }
+                }
+                else {
+                    if ($a.attr('title') == 'ic ic-phone-call') {
+                        link = String.format('<li><a href="tel:{2}" title="{0}" class="phone"><i class="{1}"></i><span class="shortcut-title">{0}</a></li>', $a.text(), $a.attr('title'),$a.attr('href').replace("#",""));
+                    }
+                    else {
+                        link = String.format('<li><a href="{0}" {3} title="{1}"><i class="{2}"></i><span class="shortcut-title">{1}</span></a></li>', $a.attr('href'), $a.text(), $a.attr('title'),NewWindow);
+                    }
+                }
+
+                if (useBefore)
+                    bottomNavBefore.before(link);
+                else
+                    bottomNav.append(link);
+            });
+        }
+    }
+
+    (function () {
+        var loadEveryViews = [],
+            loadOnlyUserView = [],
+            loadOnlyEditMode = [];
+
+        loadEveryViews.push(function () {
+            SetHilightBanner();
+            SetHilightLinkButton();
+            SetTopNavigation();
+            SetBottomNavigation();
+        });
+
+        loadOnlyEditMode.push(function () {
+        });
+
+        _spBodyOnLoadFunctions.push(function () {
+            // Global component
+            [ ].forEach.call(loadEveryViews, function (e, i, a) {
+                e();
+            });
+            // Design component
+            if (PageUtil_isInEditMode()) {
+                [ ].forEach.call(loadOnlyEditMode, function (e, i, a) {
+                    e();
+                });
+            } else {
+                [ ].forEach.call(loadOnlyUserView, function (e, i, a) {
+                    e();
+                });
+            }
+
+        });
+    })();
+})(window.jQuery);

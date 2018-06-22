@@ -1,0 +1,1796 @@
+﻿// This is our customization. Make sure to load this before global-nurtured.js
+(window.jQuery) && (function ($, undefined) {
+
+    function PageUtil_isInEditMode() {
+        var n = document.getElementById('MSOSPWebPartManager_DisplayModeName');
+        var v = n.value;
+        return (v === 'Edit' || v === 'Design') ? true : false;
+    }
+    function PageUtil_urlCombine(a, b) {
+        /* Copy from SP.ScriptHelpers.urlCombine */
+        if (a.endsWith("/")) a = a.substr(0, a.length - 1);
+        if (b.startsWith("/")) b = b.length > 1 ? b.substr(1) : "";
+        return a + "/" + b;
+    }
+    function PageUtil_determineLanguage() {
+        var actualPage = _spPageContextInfo.serverRequestPath, // /t/k/~lang/ourpage.aspx
+            siteCollectionServerRelativeUrl = _spPageContextInfo.siteServerRelativeUrl, // /t/k
+            lengthToSlice = siteCollectionServerRelativeUrl.length + ((siteCollectionServerRelativeUrl === '/') ? 0 : 1),
+            uiCulture = _spPageContextInfo.currentUICultureName;
+
+        var k_siterelative = actualPage.slice(lengthToSlice),
+            k_urlComp = k_siterelative.split('/', 1);
+
+        return k_urlComp[0];
+    }
+    function PageUtil_determineWhereWeAre() {
+        var browserPath = window.location.pathname, // /t/k/xyz/aaa/bbb or /t/k/~lang/xyz/aaa/bbb
+            siteCollectionServerRelativeUrl = _spPageContextInfo.siteServerRelativeUrl; // /t/k
+
+        var k_siterelative = browserPath.slice(siteCollectionServerRelativeUrl === '/' ? 1 : (siteCollectionServerRelativeUrl.length + 1)),
+            k_urlComp = k_siterelative.split('/', 3),
+        // is the first component a language string?
+            isLanguage = k_urlComp[0].length === 2 && !(/^ir$/i.test(k_urlComp[0]));
+
+        var isSme = function (urlComp) {
+            return urlComp.length > 1 ? (/^sme$/i.test(urlComp[1]) ? urlComp[1] : urlComp[0]) : urlComp[0];
+        };
+
+        // Full multi-language and full Thai
+        if (k_urlComp.length > 1) {
+            // Multi-language
+            if (isLanguage) {
+                //return k_urlComp[1].toLowerCase();
+                return isSme(k_urlComp.slice(1)).toLowerCase();
+            }
+        } else {
+            // Supply language or only subsite
+            // If it is a language url, landing to personal
+            if (isLanguage)
+                return 'personal';
+        }
+
+        // Fallback for Thai
+        //return k_urlComp[0];
+        return isSme(k_urlComp).toLowerCase();
+    }
+    function PageUtil_getSiteLanguageUrl(url) {
+        var durl = url.slice(0, 1) === '/' ? url.slice(1) : url;
+
+        return [_spPageContextInfo.siteAbsoluteUrl, durl].join('/');
+    }
+    function ComponentUtil_stripZeroWidthSpace(str) {
+        return str.replace(/\u200B/g, '');
+    }
+    function ComponentUtil_getPaddingClassFromChoice(padding) {
+        return /no padding/i.test(padding) ?
+            (/top/i.test(padding) ? 'nopd-t' : /bottom/i.test(padding) ? 'nopd-b' : 'nopd') :
+            '';
+    }
+
+
+
+
+
+    // May be removed //
+    function EncodeObject(obj) {
+        return STSHtmlEncode(JSON.stringify(obj));
+    }
+    function DecodeObject(str) {
+        return JSON.parse(STSHtmlDecode(str));
+    }
+    function RTETool() {
+        function ComponentParamOnChange(comp) {
+            return function (ev) {
+                var currentVal = DecodeObject(comp.attr('data-param')),
+                    selectedVal = ev.currentTarget.value,
+                    selectedName = ev.currentTarget.name;
+                currentVal[selectedName] = selectedVal;
+                comp.attr('data-param', EncodeObject(currentVal));
+            };
+        }
+        function CreateLabelAction(lbl, act) {
+            return {
+                'label': lbl,
+                'action': act
+            };
+        }
+
+        // Looking for our container class.
+        var nurturedEdit = $('.nurtured-edit');
+
+        // Add Buttons and Template
+        var dummyImage = _spPageContextInfo.siteServerRelativeUrl + '/_catalogs/masterpage/KWeb2016/assets/img/_temp/3000x1000.jpg',
+            dummyIcon = _spPageContextInfo.siteServerRelativeUrl + '/_catalogs/masterpage/KWeb2016/assets/img/component/icon/sms.png';
+
+        if (nurturedEdit.length) {
+
+            //if (typeof PageActionClick == 'function') {
+            //    var _PageActionClick = PageActionClick;
+
+            //    PageActionClick = function () {
+            //        var titleField = $('input[title="Title"].ms-spellcheck-true');
+
+            //        titleField.val(titleField.val() + " 1");
+
+            //        _PageActionClick();
+            //    };
+            //}
+            //$(document.getElementById('Ribbon.EditingTools.CPEditTab.EditAndCheckout.SaveEdit-SelectedItem')).removeAttr('onclick').on('click', function (ev) {
+            //    ev.preventDefault();
+
+            //    var titleField = $('input[title="Title"].ms-spellcheck-true');
+
+            //    titleField.val(titleField.val() + " 1");
+
+            //    return false;
+            //});
+
+            nurturedEdit.each(function (idx, elm) {
+                var $this = $(elm),
+                    displayDiv = $this.find('.ms-rtestate-write.ms-rtestate-field[contenteditable="true"]');
+                //displayDiv = $(RTE.Canvas.currentEditableRegion());
+
+                // Here are buttons.
+                var btnGroup = $('<div />', {
+                    'class': 'btn-group btn-group-lg',
+                    'role': 'group',
+                    'aria-label': 'Simple tool'
+                }), toolContainer = $('<div />', {
+                    'class': 'container-fluid'
+                }).append(btnGroup);
+                displayDiv.before(toolContainer);
+
+                if (displayDiv.length) {
+                    // Bind change events
+                    displayDiv.find('.nurtured-rte-Table-Component').each(function (i, elm) {
+                        var $elm = $(elm);
+                        $elm.find('.nurtured-comparam select[name]').on('change', ComponentParamOnChange($elm));
+                    })
+
+                    var btnAction = [
+                        CreateLabelAction('Blank container', function (ev) {
+                            ev.preventDefault();
+
+                            var component = $('<table />', {
+                                'class': 'nurtured-rte-Table-Component',
+                                'data-component': 'blankcontainer'
+                            });
+                            component.html([
+                             '<tbody>',
+                              '<tr class="nurtured-rte-TableHeaderRow-Component">',
+                               '<th class="nurtured-rte-TableHeaderFirstCol-Component ms-rtestate-read"><h3>Blank Container</h3></th>',
+                              '</tr>',
+                              '<tr class="nurtured-rte-TableOddRow-Component">',
+                               '<td class="nurtured-rte-TableFirstCol-Component">Title of Container.</td>',
+                              '</tr>',
+                              '<tr class="nurtured-rte-TableEvenRow-Component">',
+                               '<td class="nurtured-rte-TableFirstCol-Component">Body of Container.</td>',
+                              '</tr>',
+                             '</tbody>'
+                            ].join(''));
+
+                            displayDiv.append(component);
+
+                            return false;
+                        }),
+                    /*{
+                    'label': 'Simple Banner',
+                    'action': function (ev) {
+                    ev.preventDefault();
+
+                    var component = $('<table />', {
+                    'class': 'nurtured-rte-Table-Component',
+                    'data-component': 'simplebanner',
+                    'data-param': EncodeObject({'textposition': 'Left', 'textvposition': 'Top'})
+                    });
+                    component.html([
+                    '<tbody>',
+                    '<tr class="nurtured-rte-TableHeaderRow-Component">',
+                    '<th class="nurtured-rte-TableHeaderFirstCol-Component ms-rtestate-read"><h3>Simple Banner</h3></th>',
+                    '<th class="nurtured-rte-TableHeaderOddCol-Component nurtured-comparam">',
+                    '<span class="ms-rtestate-read">Order</span>',
+                    '<select name="componentorder"></select>',
+                    '<span class="ms-rtestate-read">Text block position</span>',
+                    '<select name="textposition"><option>Left</option><option>Center</option><option>Right</option></select>',
+                    '<span class="ms-rtestate-read">Text block vertical position</span>',
+                    '<select name="textvposition"><option>Top</option><option>Middle</option><option>Bottom</option></select>',
+                    '</th>',
+                    '</tr>',
+                    '<tr class="nurtured-rte-TableRow-Component">',
+                    '<td class="nurtured-rte-TableFirstCol-Component">',
+                    '<span class="ms-rtestate-read">Background image</span>',
+                    String.format('<img src="{0}" alt="" style="margin: 5px; width: 500px;"/>', dummyImage),
+                    '</td>',
+                    '<td class="nurtured-rte-TableOddCol-Component">Fill in text here!</td>',
+                    '</tr>',
+                    '</tbody>'
+                    ].join(''));
+                    component.find('.nurtured-comparam select[name]').on('change', ComponentParamOnChange(component));
+
+                    displayDiv.append(component);
+
+                    return false;
+                    }
+                    },*/
+                        CreateLabelAction('Banner with Popup', function (ev) {
+                            ev.preventDefault();
+
+                            var component = $('<table />', {
+                                'class': 'nurtured-rte-Table-Component',
+                                'data-component': 'popupbanner',
+                                'data-param': EncodeObject({ 'textposition': 'Left', 'textvposition': 'Top' })
+                            });
+                            component.html([
+                             '<tbody>',
+                              '<tr class="nurtured-rte-TableHeaderRow-Component">',
+                               '<th class="nurtured-rte-TableHeaderFirstCol-Component ms-rtestate-read"><h3>Banner with Popup</h3></th>',
+                               '<th class="nurtured-rte-TableHeaderOddCol-Component nurtured-comparam">',
+                                '<span class="ms-rtestate-read">Order</span>',
+                                '<select name="componentorder"></select>',
+                                '<span class="ms-rtestate-read">Text block position</span>',
+                                '<select name="textposition"><option>Left</option><option>Center</option><option>Right</option></select>',
+                                '<span class="ms-rtestate-read">Text block vertical position</span>',
+                                '<select name="textvposition"><option>Top</option><option>Middle</option><option>Bottom</option></select>',
+                               '</th>',
+                              '</tr>',
+                              '<tr class="nurtured-rte-TableHeaderRow-Component">',
+                               '<th class="nurtured-rte-TableHeaderFirstCol-Component ms-rtestate-read"><h4>Banner Background Image</h4></th>',
+                               '<th class="nurtured-rte-TableHeaderOddCol-Component ms-rtestate-read"><h4>Text on banner</h4></th>',
+                              '</tr>',
+                              '<tr class="nurtured-rte-TableRow-Component">',
+                               '<td class="nurtured-rte-TableFirstCol-Component">',
+                                String.format('<img src="{0}" alt="" style="margin: 5px; width: 500px;"/>', dummyImage),
+                               '</td>',
+                               '<td class="nurtured-rte-TableOddCol-Component">Fill in text here!</td>',
+                              '</tr>',
+                              '<tr class="nurtured-rte-TablePopupRow-Component">',
+                               '<td class="nurtured-rte-TableFirstCol-Component" colspan="2">Text in popup</td>',
+                              '</tr>',
+                             '</tbody>'
+                            ].join(''));
+                            component.find('.nurtured-comparam select[name]').on('change', ComponentParamOnChange(component));
+
+                            displayDiv.append(component);
+
+                            return false;
+                        }),
+                        CreateLabelAction('FAQ', function (ev) {
+                            ev.preventDefault();
+
+                            var component = $('<table />', {
+                                'class': 'nurtured-rte-Table-Component',
+                                'data-component': 'faq',
+                                'data-param': EncodeObject({ 'textposition': 'Left', 'textvposition': 'Top' })
+                            });
+                            component.html([
+                             '<tbody>',
+                              '<tr class="nurtured-rte-TableHeaderRow-Component">',
+                               '<th class="nurtured-rte-TableHeaderFirstCol-Component ms-rtestate-read"><h3>FAQ</h3></th>',
+                               '<th class="nurtured-rte-TableHeaderOddCol-Component" colspan="2">',
+                                'Type title here!',
+                               '</th>',
+                              '</tr>',
+                              '<tr class="nurtured-rte-TableHeaderRow-Component">',
+                               '<th class="nurtured-rte-TableHeaderFirstCol-Component ms-rtestate-read"><h4>Question</h4></th>',
+                               '<th class="nurtured-rte-TableHeaderOddCol-Component ms-rtestate-read"><h4>Answer</h4></th>',
+                               '<th class="nurtured-rte-TableHeaderEvenCol-Component ms-rtestate-read"><h4>Popup (Optional)</h4></th>',
+                              '</tr>',
+                              '<tr class="nurtured-rte-TableRow-Component">',
+                               '<td class="nurtured-rte-TableFirstCol-Component">Question 1</td>',
+                               '<td class="nurtured-rte-TableOddCol-Component">Answer 1</td>',
+                               '<td class="nurtured-rte-TableEvenCol-Component">Text inside popup.</td>',
+                              '</tr>',
+                              '<tr class="nurtured-rte-TableRow-Component">',
+                               '<td class="nurtured-rte-TableFirstCol-Component">Question 2</td>',
+                               '<td class="nurtured-rte-TableOddCol-Component">Answer 2</td>',
+                               '<td class="nurtured-rte-TableEvenCol-Component">Text inside popup.</td>',
+                              '</tr>',
+                              '<tr class="nurtured-rte-TableRow-Component">',
+                               '<td class="nurtured-rte-TableFirstCol-Component">Question 3</td>',
+                               '<td class="nurtured-rte-TableOddCol-Component">Answer 3</td>',
+                               '<td class="nurtured-rte-TableEvenCol-Component">Text inside popup.</td>',
+                              '</tr>',
+                             '</tbody>'
+                            ].join(''));
+
+                            displayDiv.append(component);
+
+                            return false;
+                        }),
+                        CreateLabelAction('Tab Group', function (ev) {
+                            ev.preventDefault();
+
+                            var component = $('<table/>', {
+                                'class': 'nurtured-rte-Table-Component',
+                                'data-component': 'tabgroup'
+                            });
+                            component.html([
+                             '<tbody>',
+                              '<tr class="nurtured-rte-TableHeaderRow-Component">',
+                               '<th class="nurtured-rte-TableHeaderFirstCol-Component ms-rtestate-read"><h3>Tab Group</h3></th>',
+                               '<th class="nurtured-rte-TableHeaderOddCol-Component" colspan="3">Fill in title here.</th>',
+                              '</tr>',
+                              '<tr class="nurtured-rte-TableHeaderRow-Component">',
+                               '<th class="nurtured-rte-TableHeaderFirstCol-Component ms-rtestate-read"><h4>Large Image</h4></th>',
+                               '<th class="nurtured-rte-TableHeaderOddCol-Component ms-rtestate-read"><h4>Large Image Caption</h4></th>',
+                               '<th class="nurtured-rte-TableHeaderEvenCol-Component ms-rtestate-read"><h4>Tab Icon</h4></th>',
+                               '<th class="nurtured-rte-TableHeaderLastCol-Component ms-rtestate-read"><h4>Tab Text</h4></th>',
+                              '</tr>',
+                              '<tr class="nurtured-rte-TableRow-Component">',
+                               '<td class="nurtured-rte-TableFirstCol-Component">',
+                                String.format('<img src="{0}" alt="" title="" width="200" />', dummyImage),
+                               '</td>',
+                               '<td class="nurtured-rte-TableOddCol-Component">Fill in text here.</td>',
+                               '<td class="nurtured-rte-TableEvenCol-Component">',
+                                String.format('<img src="{0}" alt="" title="" />', dummyIcon),
+                               '</td>',
+                               '<td class="nurtured-rte-TableLastCol-Component">Fill in tab text here.</td>',
+                              '</tr>',
+                              '<tr class="nurtured-rte-TableRow-Component">',
+                               '<td class="nurtured-rte-TableFirstCol-Component">',
+                                String.format('<img src="{0}" alt="" title="" width="200" />', dummyImage),
+                               '</td>',
+                               '<td class="nurtured-rte-TableOddCol-Component">Fill in text here.</td>',
+                               '<td class="nurtured-rte-TableEvenCol-Component">',
+                                String.format('<img src="{0}" alt="" title="" />', dummyIcon),
+                               '</td>',
+                               '<td class="nurtured-rte-TableLastCol-Component">Fill in tab text here.</td>',
+                              '</tr>',
+                             '</tbody>'
+                            ].join(''));
+
+                            displayDiv.append(component);
+
+                            return false;
+                        })
+                    ];
+
+                    btnAction.forEach(function (e1, i1, a1) {
+                        var btn = $('<button/>', {
+                            'type': 'button',
+                            'class': 'btn btn-default btn-green',
+                            'on': {
+                                'click': e1.action
+                            }
+                        }).text(e1.label);
+                        btnGroup.append(btn);
+                    });
+                }
+            });
+        }
+    }
+
+    function RTEOrdering() {
+        var componentSelector = '.myTable',
+            orderDropdownSelector = '.myordering';
+
+        // Looking for our container class.
+        var nurturedEdit = $('.nurtured-edit');
+
+        if (nurturedEdit.length) {
+            nurturedEdit.each(function (idx, elm) {
+                var $thisNurturedEdit = $(elm),
+                //rteDiv = $thisNurturedEdit.find('[contenteditable="true"]'),
+                    rteDiv = $(RTE.Canvas.currentEditableRegion()),
+                    components = rteDiv.find(componentSelector);
+
+                if (components.length) {
+                    var numberText = '<option value="{0}">{0}</option>',
+                        orderingOptions = [];
+
+                    // Add all orders.
+                    for (var i = 1; i <= components.length; i++) {
+                        orderingOptions.push(String.format(numberText, i));
+                    }
+
+                    var myorderings = components.find(orderDropdownSelector);
+                    myorderings.html(orderingOptions.join(''));
+
+                    components.each(function (cidx, elmcomp) {
+                        var $thisComponent = $(elmcomp),
+                            myordering = $thisComponent.find(orderDropdownSelector),
+                            index = cidx + 1,
+                            previousValue = index;
+
+                        myordering.val(index);
+
+                        myordering.on({
+                            // Use for collect previous value.
+                            'focus': function (ev) {
+                                previousValue = ev.currentTarget.value;
+
+                                return false;
+                            },
+                            'change': function (ev) {
+                                ev.preventDefault();
+
+                                var selectedValue = ev.currentTarget.value,
+                                    notthis = components.not($thisComponent);
+
+                                // Change other dropdown values.
+                                notthis.each(function (i2, e2) {
+                                    var $e2 = $(e2),
+                                        e2ordering = $e2.find(orderDropdownSelector),
+                                        e2orderingval = e2ordering.val();
+
+                                    // Just swap it (for now)
+                                    if (e2orderingval == selectedValue) {
+                                        e2ordering.val(previousValue);
+                                    }
+                                });
+                                previousValue = selectedValue;
+
+                                // Sort here!
+                                components.sort(function (a, b) {
+                                    var va = $(a).find(orderDropdownSelector).val(),
+                                        vb = $(b).find(orderDropdownSelector).val()
+
+                                    return va - vb;
+                                });
+                                components.detach().appendTo(rteDiv);
+
+                                return false;
+                            }
+                        });
+
+                    });
+                }
+            });
+        }
+
+    }
+
+    function RTEHtmlFormatter() {
+
+        var simpleBannerClassPrefix = 'ms-rteTable-SB',
+            bannerPopupClassPrefix = 'ms-rteTable-BP',
+            faqPopupClassPrefix = 'ms-rteTable-FAQ',
+            dummySmall = _spPageContextInfo.siteServerRelativeUrl + '/_catalogs/masterpage/KWeb2016/assets/img/bound/1280x640.gif',
+            dummyLarge = _spPageContextInfo.siteServerRelativeUrl + '/_catalogs/masterpage/KWeb2016/assets/img/bound/1500x600.gif';
+
+        var getSelectorFromClass = function (sel) {
+            return String.format('[class*="{0}"]', sel);
+        };
+
+        var simpleBanners = $(getSelectorFromClass(simpleBannerClassPrefix));
+        if (simpleBanners.length) {
+            simpleBanners.each(function (i, e) {
+                var $this = $(e),
+                    textPos = e.className.toLowerCase().slice(simpleBannerClassPrefix.length).trim();
+
+                var bgImage = $this.find('[class*="ms-rteTableOddRow-SB"] [class*="ms-rteTableEvenCol-SB"] > img').attr('src'),
+                    content = $this.find('[class*="ms-rteTableOddRow-SB"] [class*="ms-rteTableOddCol-SB"]').html();
+
+                var output = [
+                    String.format('<section class="section section-bg-fixed section-ct-{0}">', textPos),
+                        String.format('<div class="sc-bgimg" style="background-image:url({0})">', bgImage),
+                            String.format('<div class="hidden-w991"><img src="{0}" alt="" class="img-bound"></div>', dummyLarge),
+                            String.format('<div class="visible-w991"><img src="{0}" alt="" class="img-bound"></div>', dummySmall),
+                        '</div>',
+                        '<div class="sc-inner">',
+                            '<div class="container">',
+                                '<div class="content-area">',
+                                    '<div class="content-box entrycontent">',
+                                        content ? content.toString() : '',
+                                    '</div>',
+                                '</div>',
+                            '</div>',
+                        '</div>',
+                    '</section>'
+                ].join('');
+                e.outerHTML = output;
+            });
+        }
+
+        var bannerPopups = $(getSelectorFromClass(bannerPopupClassPrefix));
+        if (bannerPopups.length) {
+            var idPopupPrefix = 'nurtured-popup-';
+            bannerPopups.each(function (i, e) {
+                var $this = $(e),
+                    textPos = e.className.toLowerCase().slice(bannerPopupClassPrefix.length).trim();
+
+                var bgImage = $this.find('[class*="ms-rteTableOddRow-BP"] [class*="ms-rteTableEvenCol-BP"] > img').attr('src'),
+                    rawContent = $this.find('[class*="ms-rteTableOddRow-BP"] [class*="ms-rteTableOddCol-BP"]'),
+                    popupContent = $this.find('[class*="ms-rteTableEvenRow-BP"] [class*="ms-rteTableOddCol-BP"]').html(),
+                    popupId = idPopupPrefix + i;
+
+                rawContent.find('a[href="#"]').addClass('open-popup-content').attr('data-mfp-src', '#' + popupId).removeAttr('href');
+                var content = rawContent.html();
+
+                var output = [
+                    '<section class="section section-bg-fixed section-ct-right section-ct-vmiddle section-ct-white">',
+                        String.format('<div class="sc-bgimg" style="background-image:url({0})">', bgImage),
+                            String.format('<div class="hidden-w991"><img src="{0}" alt="" class="img-bound"></div>', dummyLarge),
+                            String.format('<div class="visible-w991"><img src="{0}" alt="" class="img-bound"></div>', dummySmall),
+                        '</div>',
+                        '<div class="sc-inner">',
+                            '<div class="container">',
+                                '<div class="content-area">',
+                                    '<div class="content-box entrycontent">',
+                                        content ? content.toString() : '',
+                                    '</div>',
+                                '</div>',
+                            '</div>',
+                        '</div>',
+                    '</section>',
+                    String.format('<div id="{0}" class="icw mfp-hide">', popupId),
+                        '<div class="main-container">',
+                            '<div class="container">',
+                                '<div class="entrycontent">',
+                                    popupContent ? popupContent.toString() : '',
+                                '</div>',
+                            '</div>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+                e.outerHTML = output;
+            });
+        }
+
+        var faqs = $(getSelectorFromClass(faqPopupClassPrefix));
+        if (faqs.length) {
+            faqs.each(function (i, e) {
+                var $this = $(e),
+                    textPos = e.className.toLowerCase().slice(bannerPopupClassPrefix.length).trim();
+
+                var title = $this.find('.ms-rteTableHeaderRow-FAQ .ms-rteTableHeaderEvenCol-FAQ').text(),
+                    qs = $this.find('tr').not('.ms-rteTableHeaderRow-FAQ'),
+                    qas = [];
+
+                qs.each(function (i2, e2) {
+                    var item = $(e2);
+                    var q = item.find('.ms-rteTableEvenCol-FAQ, .ms-rteTableFooterEvenCol-FAQ').text(),
+                        a = item.find('.ms-rteTableOddCol-FAQ, .ms-rteTableFooterOddCol-FAQ').html();
+                    qas.push([
+                        '<div class="accordion">',
+                            '<div class="accordion-title">', q, '</div>',
+                            '<div class="accordion-content">',
+                                '<div class="wrap">',
+                                    a ? a.toString() : '',
+                                '</div>',
+                            '</div>',
+                        '</div>', // repeat
+                    ].join(''));
+                });
+                var output = [
+                    '<section id="section-faq" class="section section-details">',
+                        '<div class="sc-inner">',
+                            '<div class="container">',
+                                '<div class="sc-headline sc-headline-aleft">',
+                                    '<h2 class="sc-heading">', title, '</h2>',
+                                '</div>',
+                                '<div class="accordion-group accordion-faq entrycontent">',
+                                    qas.join(''),
+                                '</div>',
+                            '</div>',
+                        '</div>',
+                    '</section>'
+                ].join('');
+                e.outerHTML = output;
+            });
+        }
+
+        var componentSelector = '.nurtured-rte-Table-Component';
+        $(componentSelector).each(function (i, elm) {
+            var $elm = $(elm), out = [], handled = true;
+
+            //console.log($elm.data('component'));
+            switch ($elm.data('component')) {
+                case 'faq':
+                    {
+                        var title = $elm.find('.nurtured-rte-TableHeaderOddCol-Component').eq(0).text(),
+                        qas = $elm.find('.nurtured-rte-TableRow-Component'),
+                        qasHtml = [],
+                        popups = [];
+
+                        qas.each(function (idx, elm2) {
+                            var $elm2 = $(elm2),
+                            q = $elm2.find('.nurtured-rte-TableFirstCol-Component').text(),
+                            a = $elm2.find('.nurtured-rte-TableOddCol-Component'),
+                            p = $elm2.find('.nurtured-rte-TableEvenCol-Component').html();
+
+                            var popupId = 'nurtured-faq-popup-' + idx;
+                            popups.push([
+                            String.format('<div id="{0}" class="icw mfp-hide">', popupId),
+                             '<div class="main-container">',
+                              '<div class="container">',
+                               '<div class="entrycontent">',
+                                p ? p.toString() : '',
+                               '</div>',
+                              '</div>',
+                             '</div>',
+                            '</div>'
+                        ].join(''));
+                            a.find('a[href="#"]').eq(0).addClass('open-popup-content').attr('data-mfp-src', '#' + popupId).removeAttr('href');
+                            a = a.html();
+
+                            qasHtml.push([
+                            '<div class="accordion">',
+                             '<div class="accordion-title">', q, '</div>',
+                              '<div class="accordion-content">',
+                               '<div class="wrap">',
+                                a ? a.toString() : '',
+                               '</div>',
+                             '</div>',
+                            '</div>', // repeat
+                        ].join(''));
+                        });
+                        out = [
+                        '<section id="section-faq" class="section section-details">',
+                         '<div class="sc-inner">',
+                          '<div class="container">',
+                           '<div class="sc-headline sc-headline-aleft">',
+                            '<h2 class="sc-heading">', title, '</h2>',
+                           '</div>',
+                           '<div class="accordion-group accordion-faq entrycontent">',
+                            qasHtml.join(''),
+                           '</div>',
+                          '</div>',
+                         '</div>',
+                        '</section>',
+                        popups.join('')
+                    ];
+                    }
+                    break;
+                case 'blankcontainer':
+                    {
+                        var title = $elm.find('.nurtured-rte-TableOddRow-Component > .nurtured-rte-TableFirstCol-Component').text(),
+                        content = $elm.find('.nurtured-rte-TableEvenRow-Component > .nurtured-rte-TableFirstCol-Component').html();
+
+                        out = [
+                        '<section class="section section-detail">',
+                         '<div class="sc-inner">',
+                          '<div class="container>',
+                           String.format('<div class="sc-headline sc-headline-aleft"><h2 class="sc-heading">{0}</h2></div>', title),
+                           String.format('<div class="table-detail-group entrycontent">{0}</div>', (content ? content.toString() : '')),
+                          '</div>',
+                         '</div>',
+                        '</section>'
+                    ];
+                    }
+                    break;
+                case 'simplebanner':
+                    //    handled = false;
+                case 'popupbanner':
+                    {
+                        var dummyLarge = _spPageContextInfo.siteServerRelativeUrl + '/_catalogs/masterpage/KWeb2016/assets/img/bound/1280x640.gif',
+                        dummySmall = _spPageContextInfo.siteServerRelativeUrl + '/_catalogs/masterpage/KWeb2016/assets/img/bound/1500x600.gif';
+                        $dataRow = $elm.find('.nurtured-rte-TableRow-Component, .nurtured-rte-TableEvenRow-Component').eq(0),
+                        $popupRows = $elm.find('.nurtured-rte-TablePopupRow-Component > td, .nurtured-rte-TablePopupRow-Component > th, .nurtured-rte-TableOddRow-Component > [colspan="2"], .nurtured-rte-TableEvenRow-Component > [colspan="2"]');
+
+                        var bgImage = $dataRow.find('.nurtured-rte-TableFirstCol-Component > img').attr('src'),
+                        rawContent = $dataRow.find('.nurtured-rte-TableOddCol-Component, .nurtured-rte-TableLastCol-Component'),
+                        popupLinks = rawContent.find('a[href="#"]');
+
+                        var popups = [];
+                        $popupRows.each(function (i2, elm2) {
+                            var popupContent = $(elm2).html(),
+                            popupId = 'nurtured-popupbanner-popup-' + i2;
+
+                            popups.push([
+                            String.format('<div id="{0}" class="icw mfp-hide">', popupId),
+                             '<div class="main-container">',
+                              '<div class="container">',
+                               '<div class="entrycontent">',
+                                popupContent ? popupContent.toString() : '',
+                               '</div>',
+                              '</div>',
+                             '</div>',
+                            '</div>'
+                        ].join(''));
+
+                            if (i2 < popupLinks.length)
+                                popupLinks.eq(i2).addClass('open-popup-content').attr('data-mfp-src', '#' + popupId).removeAttr('href');
+                        });
+                        var content = rawContent.html();
+
+                        var param = DecodeObject($elm.data('param')),
+                        textParam = String.format('section-ct-{0} section-ct-v{1}',
+                            param.textposition ? param.textposition.toLowerCase() : 'null',
+                            param.textvposition ? param.textvposition.toLowerCase() : 'null');
+
+                        out = [
+                        String.format('<section class="section section-bg-fixed {0}">', textParam),
+                         String.format('<div class="sc-bgimg" style="background-image:url({0})">', bgImage),
+                          String.format('<div class="hidden-w991"><img src="{0}" alt="" class="img-bound"></div>', dummyLarge),
+                          String.format('<div class="visible-w991"><img src="{0}" alt="" class="img-bound"></div>', dummySmall),
+                         '</div>',
+                         '<div class="sc-inner">',
+                          '<div class="container">',
+                           '<div class="content-area">',
+                            '<div class="content-box entrycontent">',
+                             content ? content.toString() : '',
+                            '</div>',
+                           '</div>',
+                          '</div>',
+                         '</div>',
+                        '</section>',
+                        popups.join('')
+                    ];
+                    }
+                    break;
+                case 'tabgroup':
+                    {
+                        var headSection = $elm.find('.nurtured-rte-TableHeaderOddCol-Component').html(),
+                        largeSection = [],
+                        tabSection = [];
+                        $elm.find('.nurtured-rte-TableRow-Component').each(function (i2, elm2) {
+                            var $elm2 = $(elm2),
+                            limg = $elm2.find('.nurtured-rte-TableFirstCol-Component > img').attr('src'),
+                            ltxt = $elm2.find('.nurtured-rte-TableOddCol-Component').html(),
+                            tico = $elm2.find('.nurtured-rte-TableEvenCol-Component > img').attr('src'),
+                            ttxt = $elm2.find('.nurtured-rte-TableLastCol-Component').text();
+
+                            var lsecId = 'component-services-' + (i2),
+                            lsecClass = 'tab-content component-content ' + ((i2 === 0) ? 'tab-content-current' : '');
+
+                            largeSection.push([
+                            String.format('<div id="{0}" class="{1}">', lsecId, lsecClass),
+                             '<div class="image">',
+                              String.format('<img src="{0}" width="" alt="">', limg),
+                             '</div>',
+                             '<div class="entrycontent">',
+                              ltxt ? ltxt.toString() : '',
+                             '</div>',
+                            '</div>'
+                        ].join(''));
+                            tabSection.push([
+                            String.format('<li class="{0}">', (i2 === 0 ? 'current' : '')),
+                             String.format('<a href="#{0}" class="tab-trigger">', lsecId),
+                              String.format('<span class="ic"><i class="crop-circle"><img src="{0}" alt=""></i></span>', tico),
+                              String.format('<span class="ic-label">{0}</span>', ttxt),
+                             '</a>',
+                            '</li>'
+                        ].join(''));
+                        });
+
+                        out = [
+                        '<section id="section-additional-services" class="section section-component">',
+                         '<div class="sc-inner">',
+                          '<div class="container">',
+                           '<div class="sc-headline">',
+                            headSection ? headSection.toString() : '',
+                           '</div>',
+                           '<div class="component-block tabs-group">',
+                            '<div class="component-col">',
+                             largeSection.join(''),
+                            '</div>',
+                            '<div class="component-col scroller-container">',
+                             '<div class="scroller">',
+                              '<div class="scroller-wrap">',
+                               '<ul class="tabs-list component-list">',
+                                tabSection.join(''),
+                               '</ul>',
+                              '</div>',
+                             '</div>',
+                            '</div>',
+                           '</div>',
+                          '</div>',
+                         '</div>',
+                        '</section>'
+                    ];
+                    }
+                    break;
+                default:
+                    handled = false;
+                    break;
+            }
+            if (handled)
+                elm.outerHTML = out.join('');
+        });
+    }
+    // End May be removed //
+
+    var nurturedComponent = {
+        'selectors': {
+            'group': '.KWebPageComponentGroup',
+            'container': '.KWebPageComponentContainer',
+            'params': {
+                'type': '[data-name="KWebPageComponentType"]',
+                'order': '[data-name="KWebPageComponentOrder"]',
+                'textpos': '[data-name="KWebPageComponentTextPosition"]',
+                'html': '[data-name="KWebPageComponentHTML"]',
+                'image': '[data-name="KWebPageComponentImage"]',
+                'popup': '[data-name="KWebPageComponentPopup"]',
+                'textalign': '[data-name="KWebPageComponentTextAlign"]',
+                'basecolor': '[data-name="KWebPageComponentTextBaseColor"]',
+                'padding': '[data-name="KWebPageComponentPadding"]'
+            },
+            'instruction': '.KWebPageComponentFieldInstruction'
+        },
+        'components': {
+            'Banner': {
+                'fields': ['Popup', 'TextPosition', 'Image', 'TextAlign', 'TextBaseColor'],
+                'htmlInstruction': 'Text will be placed on banner.',
+                'renderer': function (param) {
+                    var out = [];
+
+                    var dummyLarge = PageUtil_urlCombine(_spPageContextInfo.siteServerRelativeUrl,
+                            '/_catalogs/masterpage/KWeb2016/assets/img/bound/1500x600.gif'),
+                        dummySmall = PageUtil_urlCombine(_spPageContextInfo.siteServerRelativeUrl,
+                            '/_catalogs/masterpage/KWeb2016/assets/img/bound/1280x640.gif');
+
+                    var bgImage = param.image,
+                        textPos = param.textpos.toLowerCase().split('|'),
+                        textAlign = param.textalign,
+                        textBaseColor = param.basecolor,
+                        padding = param.padding,
+                        rawContent = param.html,
+                        $popupRows = param.popup,
+                        popupLinks = rawContent.find('a[href="#"]');
+
+                    var paddingClass = ComponentUtil_getPaddingClassFromChoice(padding),
+                        textBaseColorClass = textBaseColor ? String.format('section-ct-{0}', textBaseColor.toLowerCase()) : '';
+                    var textParam = '';
+                    try {
+                        textParam = String.format(' section-ct-v{0} section-ct-{1}',
+                            textPos[0] ? textPos[0] : 'null',
+                            textPos[1] ? textPos[1] : 'null');
+                    } catch (ex) { ; }
+
+                    rawContent.find('a[href]').addClass('more');
+                    $popupRows.find('a[href]').addClass('more');
+
+                    var popups = [];
+                    $popupRows.each(function (idx, elm) {
+                        var popupContent = $(elm).html(),
+                            popupId = param.idPrefix + 'popup-' + idx;
+
+                        popups.push([
+                            String.format('<div id="{0}" class="icw mfp-hide">', popupId),
+                             '<div class="main-container">',
+                              '<div class="container">',
+                               '<div class="entrycontent">',
+                                popupContent ? popupContent.toString() : '',
+                               '</div>',
+                              '</div>',
+                             '</div>',
+                            '</div>'
+                        ].join(''));
+
+                        if (idx < popupLinks.length)
+                            popupLinks.eq(idx).addClass('open-popup-content').attr('data-mfp-src', '#' + popupId).removeAttr('href');
+                    });
+                    var content = rawContent.html();
+
+                    out = [
+                        String.format('<section class="section section-bg-fixed {0} {1}">', textParam, textBaseColorClass),
+                         String.format('<div class="sc-bgimg" style="background-image:url({0})">', bgImage),
+                          String.format('<div class="hidden-w991"><img src="{0}" alt="" class="img-bound"></div>', dummyLarge),
+                          String.format('<div class="visible-w991"><img src="{0}" alt="" class="img-bound"></div>', dummySmall),
+                         '</div>',
+                         String.format('<div class="sc-inner {0}">', paddingClass),
+                          '<div class="container">',
+                           '<div class="content-area">',
+                            String.format('<div class="content-box entrycontent a-{0}">', textAlign.toLowerCase()),
+                             content ? content.toString() : '',
+                            '</div>',
+                           '</div>',
+                          '</div>',
+                         '</div>',
+                        '</section>',
+                        popups.join('')
+                    ];
+
+                    return out.join('');
+                }
+            },
+            'CardSlider': {
+                'fields': ['Popup'],
+                'htmlInstruction': 'Add a 3-column table. The first column is card label (diplay on top). The second column is card image. The third column is card information. Insert one picture per table row.',
+                'renderer': function (param) {
+                    var out = [];
+
+                    var tableElm = param.html.children('table'),
+                        padding = param.padding,
+                        title = tableElm.prev().text(),
+                        cardRows = tableElm.children('tbody').children('tr'),
+                        $popupRows = param.popup,
+                        popupLinks = cardRows.find('a[href="#"]');
+
+                    var paddingClass = ComponentUtil_getPaddingClassFromChoice(padding);
+
+                    param.html.find('a[href]').addClass('more');
+                    $popupRows.find('a[href]').addClass('more');
+
+                    var popups = [];
+                    $popupRows.each(function (idx, elm) {
+                        var popupContent = $(elm).html(),
+                            popupId = param.idPrefix + 'popup-' + idx;
+
+                        popups.push([
+                            String.format('<div id="{0}" class="icw mfp-hide">', popupId),
+                             '<div class="main-container">',
+                              '<div class="container">',
+                               '<div class="entrycontent">',
+                                popupContent ? popupContent.toString() : '',
+                               '</div>',
+                              '</div>',
+                             '</div>',
+                            '</div>'
+                        ].join(''));
+
+                        if (idx < popupLinks.length)
+                            popupLinks.eq(idx).addClass('open-popup-content').attr('data-mfp-src', '#' + popupId).removeAttr('href');
+                    });
+
+                    var cards = [];
+                    cardRows.each(function (idx, card) {
+                        var $card = $(card),
+                            lbl = $card.children('th, td').eq(0).text(),
+                            cimg = $card.children('th, td').eq(1).find('img').attr('src'),
+                            calt = $card.children('th, td').eq(1).find('img').attr('alt'),
+                            cinfo = $card.children('th, td').eq(2).html();
+
+                        cards.push([
+                            '<div class="ms-slide">',
+                                String.format('<h2 class="h1 sc-heading">{0}</h2>', lbl),
+                                String.format('<img src="{0}" alt=""/>', cimg),
+                                '<div class="ms-info">',
+                                    cinfo ? cinfo.toString() : '',
+                                '</div>',
+                                String.format('<div class="ms-thumb"><img src="{0}" alt="{1}"/></div>', cimg, calt),
+                            '</div>' // Repeat
+                        ].join(''));
+                    })
+
+                    out = [
+                        '<section class="section section-card section-bg-gray">',
+                            String.format('<div class="sc-inner {0}">', paddingClass),
+                                '<div class="container">',
+                                    '<div id="card-slider">',
+                                        '<div class="master-slider">',
+                                            cards.join(''),
+                                        '</div>',
+                                        '<div class="card-slider-info"></div>',
+                                        '<div class="card-slider-thumb"></div>',
+                                    '</div>',
+                                '</div>',
+                            '</div>',
+                        '</section>',
+                        popups.join('')
+                    ];
+
+                    return out.join('');
+                }
+            },
+            'FAQ': {
+                'fields': ['Popup'],
+                'htmlInstruction': 'Add a text to be table title and then add 2-column table. The first column is a question. The second column is an answer.',
+                'renderer': function (param) {
+                    var out = [];
+
+                    var tableElm = param.html.children('table'),
+                        padding = param.padding,
+                        title = tableElm.prev().text(),
+                        qas = tableElm.children('tbody').children('tr'),
+                        $popupRows = param.popup,
+                        popupLinks = qas.find('a[href="#"]');
+
+                    var paddingClass = ComponentUtil_getPaddingClassFromChoice(padding);
+
+                    param.html.find('a[href]').addClass('more');
+                    $popupRows.find('a[href]').addClass('more');
+
+                    var popups = [];
+                    $popupRows.each(function (idx, elm) {
+                        var popupContent = $(elm).html(),
+                            popupId = param.idPrefix + 'popup-' + idx;
+
+                        popups.push([
+                            String.format('<div id="{0}" class="icw mfp-hide">', popupId),
+                             '<div class="main-container">',
+                              '<div class="container">',
+                               '<div class="entrycontent">',
+                                popupContent ? popupContent.toString() : '',
+                               '</div>',
+                              '</div>',
+                             '</div>',
+                            '</div>'
+                        ].join(''));
+
+                        if (idx < popupLinks.length)
+                            popupLinks.eq(idx).addClass('open-popup-content').attr('data-mfp-src', '#' + popupId).removeAttr('href');
+                    });
+
+                    var qasHtml = [];
+                    qas.each(function (idx, elm) {
+                        var $elm2 = $(elm),
+                            q = $elm2.children('th, td').eq(0).text(),
+                            a = $elm2.children('th, td').eq(1);
+
+                        a = a.html();
+
+                        qasHtml.push([
+                            '<div class="accordion">',
+                             '<div class="accordion-title">', q, '</div>',
+                              '<div class="accordion-content">',
+                               '<div class="wrap">',
+                                a ? a.toString() : '',
+                               '</div>',
+                             '</div>',
+                            '</div>', // repeat
+                        ].join(''));
+                    });
+
+                    out = [
+                        '<section id="section-faq" class="section section-details">',
+                         String.format('<div class="sc-inner {0}">', paddingClass),
+                          '<div class="container">',
+                           '<div class="sc-headline sc-headline-aleft">',
+                            '<h2 class="sc-heading">', title, '</h2>',
+                           '</div>',
+                           '<div class="accordion-group accordion-faq entrycontent">',
+                            qasHtml.join(''),
+                           '</div>',
+                          '</div>',
+                         '</div>',
+                        '</section>',
+                        popups.join('')
+                    ];
+                    return out.join('');
+                }
+            },
+            'FlexBanner': {
+                'fields': ['Popup', 'Image'],
+                'htmlInstruction': 'Text will be placed on banner.',
+                'renderer': function (param) {
+                    var out = [];
+
+                    var bgImage = param.image,
+                        textPos = param.textpos.toLowerCase().split('|'),
+                        textAlign = param.textalign,
+                        textBaseColor = param.basecolor,
+                        padding = param.padding,
+                        rawContent = param.html,
+                        $popupRows = param.popup,
+                        popupLinks = rawContent.find('a[href="#"]');
+
+                    var paddingClass = ComponentUtil_getPaddingClassFromChoice(padding),
+                        textBaseColorClass = textBaseColor ? String.format('section-ct-{0}', textBaseColor.toLowerCase()) : '';
+                    //var textParam = '';
+                    //try {
+                    //    textParam = String.format(' section-ct-v{0} section-ct-{1}',
+                    //        textPos[0] ? textPos[0] : 'null',
+                    //        textPos[1] ? textPos[1] : 'null');
+                    //} catch (ex) {; }
+
+                    rawContent.find('a[href]').addClass('more');
+                    $popupRows.find('a[href]').addClass('more');
+
+                    var popups = [];
+                    $popupRows.each(function (idx, elm) {
+                        var popupContent = $(elm).html(),
+                            popupId = param.idPrefix + 'popup-' + idx;
+
+                        popups.push([
+                            String.format('<div id="{0}" class="icw mfp-hide">', popupId),
+                             '<div class="main-container">',
+                              '<div class="container">',
+                               '<div class="entrycontent">',
+                                popupContent ? popupContent.toString() : '',
+                               '</div>',
+                              '</div>',
+                             '</div>',
+                            '</div>'
+                        ].join(''));
+
+                        if (idx < popupLinks.length)
+                            popupLinks.eq(idx).addClass('open-popup-content').attr('data-mfp-src', '#' + popupId).removeAttr('href');
+                    });
+                    var content = rawContent.html();
+
+                    out = [
+                        String.format('<section class="section section-bg-flexible section-ct-center {0}" style="background-image:url({1})">', textBaseColor, bgImage),
+                         String.format('<div class="sc-inner {0}">', paddingClass),
+                          '<div class="entrycontent container">',
+                             content ? content.toString() : '',
+                          '</div>',
+                         '</div>',
+                        '</section>',
+                        popups.join('')
+                    ];
+
+                    return out.join('');
+                }
+            },
+            'InvisibleSectionName': {
+                'fields': [],
+                'htmlInstruction': 'Text will be used as local navigation.',
+                'renderer': function (param) {
+
+                    var title = param.html.text(),
+                        idLink = param.idPrefix + 'sect',
+                        li = String.format('<li><a class="link moveScroll" href="#{0}">{1}</a></li>', idLink, title);
+
+                    $('#localnav-fixed .localnav-wrap ul.list-inline.localnav-links.pull-left').append(li);
+
+                    return String.format('<div id="{0}"></div>', idLink);
+                }
+            },
+            'TabGroup': {
+                'fields': ['Popup'],
+                'htmlInstruction': 'Add a text to be section title and then add 4-column table. The first column is a large image. The second column is a text below the large image. The third column is a tab icon. The fourth column is a tab message.',
+                'renderer': function (param) {
+                    var out = [];
+
+                    var tableElm = param.html.children('table'),
+                        padding = param.padding,
+                        qas = tableElm.children('tbody').children('tr'),
+                        $popupRows = param.popup,
+                        popupLinks = qas.find('a[href="#"]'),
+                        headSection = [],
+                        largeSection = [],
+                        tabSection = [];
+
+                    var paddingClass = ComponentUtil_getPaddingClassFromChoice(padding);
+
+                    param.html.find('a[href]').addClass('more');
+                    $popupRows.find('a[href]').addClass('more');
+
+                    var popups = [];
+                    $popupRows.each(function (idx, elm) {
+                        var popupContent = $(elm).html(),
+                            popupId = param.idPrefix + 'popup-' + idx;
+
+                        popups.push([
+                            String.format('<div id="{0}" class="icw mfp-hide">', popupId),
+                             '<div class="main-container">',
+                              '<div class="container">',
+                               '<div class="entrycontent">',
+                                popupContent ? popupContent.toString() : '',
+                               '</div>',
+                              '</div>',
+                             '</div>',
+                            '</div>'
+                        ].join(''));
+
+                        if (idx < popupLinks.length)
+                            popupLinks.eq(idx).addClass('open-popup-content').attr('data-mfp-src', '#' + popupId).removeAttr('href');
+                    });
+
+                    if (tableElm.prevAll().length) {
+                        tableElm.prevAll().toArray().reverse().forEach(function (e, i, a) {
+                            headSection.push(e.outerHTML.toString());
+                        });
+                    }
+
+                    tableElm.find('tbody > tr').each(function (idx, elm) {
+                        var $elm = $(elm),
+                            limg = $elm.find('th, td').eq(0).find('img').attr('src'),
+                            lalt = $elm.find('th, td').eq(0).find('img').attr('alt'),
+                            ltxt = $elm.find('th, td').eq(1).html(),
+                            tico = $elm.find('th, td').eq(2).find('img').attr('src'),
+                            talt = $elm.find('th, td').eq(2).find('img').attr('alt'),
+                            ttxt = $elm.find('th, td').eq(3).text();
+
+                        var lsecId = param.idPrefix + 'popup-' + (idx),
+                            lsecClass = 'tab-content component-content ' + ((idx === 0) ? 'tab-content-current' : '');
+
+                        largeSection.push([
+                            String.format('<div id="{0}" class="{1}">', lsecId, lsecClass),
+                             '<div class="image">',
+                              String.format('<img src="{0}" width="" alt="{1}">', limg, lalt),
+                             '</div>',
+                             '<div class="entrycontent">',
+                              ltxt ? ltxt.toString() : '',
+                             '</div>',
+                            '</div>'
+                        ].join(''));
+                        tabSection.push([
+                            String.format('<li class="{0}">', (idx === 0 ? 'current' : '')),
+                             String.format('<a href="#{0}" class="tab-trigger">', lsecId),
+                              String.format('<span class="ic"><i class="crop-circle"><img src="{0}" alt="{1}"></i></span>', tico, talt),
+                              String.format('<span class="ic-label">{0}</span>', ttxt),
+                             '</a>',
+                            '</li>'
+                        ].join(''));
+                    });
+
+                    out = [
+                        '<section id="section-additional-services" class="section section-component">',
+                         String.format('<div class="sc-inner {0}">', paddingClass),
+                          '<div class="container">',
+                           '<div class="sc-headline">',
+                            headSection.join(''),
+                           '</div>',
+                           '<div class="component-block tabs-group">',
+                            '<div class="component-col">',
+                             largeSection.join(''),
+                            '</div>',
+                            '<div class="component-col scroller-container">',
+                             '<div class="scroller">',
+                              '<div class="scroller-wrap">',
+                               '<ul class="tabs-list component-list">',
+                                tabSection.join(''),
+                               '</ul>',
+                              '</div>',
+                             '</div>',
+                            '</div>',
+                           '</div>',
+                          '</div>',
+                         '</div>',
+                        '</section>',
+                        popups.join('')
+                    ];
+
+                    return out.join('');
+                }
+            },
+            'TextBlock': {
+                'fields': ['Popup'],
+                'htmlInstruction': 'Text will be displayed as inserted. The table style inside this block will be stripped out.',
+                'renderer': function (param) {
+                    var out = [];
+
+                    var bgImage = param.image,
+                        padding = param.padding,
+                        rawContent = param.html,
+                        $popupRows = param.popup,
+                        popupLinks = rawContent.find('a[href="#"]');
+
+                    var paddingClass = ComponentUtil_getPaddingClassFromChoice(padding);
+
+                    rawContent.find('a[href]').addClass('more');
+                    $popupRows.find('a[href]').addClass('more');
+
+                    var popups = [];
+                    $popupRows.each(function (idx, elm) {
+                        var popupContent = $(elm).html(),
+                            popupId = param.idPrefix + 'popup-' + idx;
+
+                        popups.push([
+                            String.format('<div id="{0}" class="icw mfp-hide">', popupId),
+                             '<div class="main-container">',
+                              '<div class="container">',
+                               '<div class="entrycontent">',
+                                popupContent ? popupContent.toString() : '',
+                               '</div>',
+                              '</div>',
+                             '</div>',
+                            '</div>'
+                        ].join(''));
+
+                        if (idx < popupLinks.length)
+                            popupLinks.eq(idx).addClass('open-popup-content').attr('data-mfp-src', '#' + popupId).removeAttr('href');
+                    });
+
+                    rawContent.find('table').each(function (i, e) {
+                        var $e = $(e),
+                            maxColumn = 0;
+
+                        $e.children('tbody').children('tr').each(function (idx, elm) {
+                            var $elm = $(elm),
+                                numCol = $elm.children().length;
+
+                            if (numCol === 1) {
+                                // For really empty row.
+                                if ($elm.children().text().replace(/\u200B/g, '').trim() === '')
+                                    $elm.addClass('tr-empty');
+                            }
+
+                            if (numCol > maxColumn)
+                                maxColumn = numCol;
+
+                            $elm.children().removeAttr('width').remove('height').removeAttr('style');
+                        });
+
+                        //$e.removeAttr('width').removeAttr('height').removeAttr('style').addClass('entrycontent').addClass(String.format('table-detail-{0}columns', maxColumn));
+                    });
+
+                    var content = rawContent.html();
+                    out = [
+                        '<section class="section" data-component="TextBlock">',
+                         String.format('<div class="sc-inner {0}">', paddingClass),
+                          '<div class="container">',
+                           content ? content.toString() : '',
+                          '</div>',
+                         '</div>',
+                        '</section>',
+                        popups.join('')
+                    ];
+
+                    return out.join('');
+                }
+            },
+            'HtmlBlock': {
+                'fields': ['Popup', 'Image'],
+                'htmlInstruction': 'Text will be displayed as inserted. The table style inside this block will be stripped out.',
+                'renderer': function (param) {
+                    var out = [];
+
+                    var bgImage = param.image,
+                        rawContent = param.html,
+                        $popupRows = param.popup,
+                        popupLinks = rawContent.find('a[href="#"]');
+
+                    //  rawContent.find('a[href]').addClass('more');
+                    //  $popupRows.find('a[href]').addClass('more');
+
+                    var popups = [];
+                    $popupRows.each(function (idx, elm) {
+                        var popupContent = $(elm).html(),
+                            popupId = param.idPrefix + 'popup-' + idx;
+
+                        popups.push([
+                            String.format('<div id="{0}" class="icw mfp-hide">', popupId),
+                             '<div class="main-container">',
+                              '<div class="container">',
+                               '<div class="entrycontent">',
+                                popupContent ? popupContent.toString() : '',
+                               '</div>',
+                              '</div>',
+                             '</div>',
+                            '</div>'
+                        ].join(''));
+
+                        if (idx < popupLinks.length)
+                            popupLinks.eq(idx).addClass('open-popup-content').attr('data-mfp-src', '#' + popupId).removeAttr('href');
+                    });
+
+                    rawContent.find('table').each(function (i, e) {
+                        var $e = $(e),
+                            maxColumn = 0;
+
+                        $e.children('tbody').children('tr').each(function (idx, elm) {
+                            var $elm = $(elm),
+                                numCol = $elm.children().length;
+
+                            if (numCol === 1) {
+                                // For really empty row.
+                                if ($elm.children().text().replace(/\u200B/g, '').trim() === '')
+                                    $elm.addClass('tr-empty');
+                            }
+
+                            if (numCol > maxColumn)
+                                maxColumn = numCol;
+
+                            $elm.children().removeAttr('width').remove('height').removeAttr('style');
+                        });
+
+                        //$e.removeAttr('width').removeAttr('height').removeAttr('style').addClass('entrycontent ').addClass(String.format('table-detail-{0}columns', maxColumn));
+                    });
+                    if (typeof bgImage != 'undefined' && bgImage != '' && rawContent.children("section").length > 0) {
+                        if (rawContent.children("section").hasClass('section-bg-fixed'))
+                            rawContent.find("div.sc-bgimg").attr("style", String.format("background-image:url({0})", bgImage));
+                        else
+                            rawContent.find("section").attr("style", String.format("background-image:url({0})", bgImage));
+
+                    }
+                    var content = (rawContent.find("section")[0]) ? rawContent.find("section")[0].outerHTML : "";
+                    content = content.replace(/&nbsp;|&#160;|\r\n|\n|\r|\t/g, '').replace(/\s{2,}/g, ' ').replace(/\u200B/g, '').trim();
+
+                    out = [
+                        content ? content.toString() : '',
+                        popups.join('')
+                    ];
+
+                    return out.join('');
+                }
+            },
+            'Tiles': {
+                'fields': ['Popup'],
+                'htmlInstruction': 'Add a text to be section title and then add a 2-column table. The first column is tile text. The second column is tile image.',
+                'renderer': function (param) {
+                    var out = [];
+
+                    var tableElm = param.html.children('table'),
+                    //title = tableElm.prev().text(),
+                        tileRows = tableElm.children('tbody').children('tr'),
+                        $popupRows = param.popup,
+                        popupLinks = tileRows.children('th, td').find('a[href="#"]');
+
+                    param.html.find('a[href]').addClass('more');
+                    $popupRows.find('a[href]').addClass('more');
+
+                    var tiles = [], popups = [], headSection = [];
+
+                    if (tableElm.prevAll().length) {
+                        tableElm.prevAll().toArray().reverse().forEach(function (e, i, a) {
+                            var txt = e.innerText.toString();
+                            txt = txt.replace(/\u200B/g, '');
+                            if (txt.trim())
+                                headSection.push(txt);
+                        });
+                    }
+
+                    $popupRows.each(function (idx, elm) {
+                        var popupContent = $(elm).html(),
+                            popupId = param.idPrefix + 'popup-' + idx;
+
+                        popups.push([
+                            String.format('<div id="{0}" class="icw mfp-hide">', popupId),
+                             '<div class="main-container">',
+                              '<div class="container">',
+                               '<div class="entrycontent">',
+                                popupContent ? popupContent.toString() : '',
+                               '</div>',
+                              '</div>',
+                             '</div>',
+                            '</div>'
+                        ].join(''));
+
+                        if (idx < popupLinks.length)
+                            popupLinks.eq(idx).addClass('open-popup-content').attr('data-mfp-src', '#' + popupId).removeAttr('href');
+                    });
+
+                    tileRows.each(function (idx, tile) {
+                        var $tile = $(tile),
+                            lbl = $tile.children('th, td').eq(0).html(),
+                            cimg = $tile.children('th, td').eq(1).find('img').attr('src'),
+                            calt = $tile.children('th, td').eq(1).find('img').attr('alt');
+
+                        tiles.push([
+                            '<div class="tile">',
+                                '<div class="tile-image">',
+                                    String.format('<img src="{0}" alt="{1}" class="img-full" />', cimg, calt),
+                                '</div>',
+                                '<div class="tile-headline entrycontent"><div class="tb"><div class="tbcell v-middle a-center">',
+                                    lbl ? lbl.toString() : '',
+                                '</div></div></div>',
+                            '</div>' // Repeat
+                        ].join(''));
+                    })
+
+                    out = [
+                        '<section class="section section-tiles">',
+                            headSection.length ?
+                                [
+                                    '<div class="container">',
+                                        '<div class="sc-headline">',
+                                            headSection.join(''),
+                                        '</div>',
+                                    '</div>'
+                                ].join('') :
+                                '',
+                            '<div class="tiles">',
+                                tiles.join(''),
+                            '</div>',
+                        '</section>',
+                        popups.join('')
+                    ];
+
+                    return out.join('');
+                }
+            },
+            'ShowMoreTextBlock': {
+                'fields': ['Popup'],
+                'htmlInstruction': 'Text will be displayed as inserted. The table style inside this block will be stripped out.',
+                'renderer': function (param) {
+                    var out = [];
+
+                    var bgImage = param.image,
+                        padding = param.padding,
+                        rawContent = param.html,
+                        $popupRows = param.popup,
+                        popupLinks = rawContent.find('a[href="#"]');
+
+                    var paddingClass = ComponentUtil_getPaddingClassFromChoice(padding);
+
+                    rawContent.find('a[href]').addClass('more');
+                    $popupRows.find('a[href]').addClass('more');
+
+                    var popups = [];
+                    $popupRows.each(function (idx, elm) {
+                        var popupContent = $(elm).html(),
+                            popupId = param.idPrefix + 'popup-' + idx;
+
+                        popups.push([
+                            String.format('<div id="{0}" class="icw mfp-hide">', popupId),
+                             '<div class="main-container">',
+                              '<div class="container">',
+                               '<div class="entrycontent">',
+                                popupContent ? popupContent.toString() : '',
+                               '</div>',
+                              '</div>',
+                             '</div>',
+                            '</div>'
+                        ].join(''));
+
+                        if (idx < popupLinks.length)
+                            popupLinks.eq(idx).addClass('open-popup-content').attr('data-mfp-src', '#' + popupId).removeAttr('href');
+                    });
+
+                    rawContent.find('table').each(function (i, e) {
+                        var $e = $(e),
+                            maxColumn = 0;
+
+                        $e.children('tbody').children('tr').each(function (idx, elm) {
+                            var $elm = $(elm),
+                                numCol = $elm.children().length;
+
+                            if (numCol === 1) {
+                                // For really empty row.
+                                if ($elm.children().text().replace(/\u200B/g, '').trim() === '')
+                                    $elm.addClass('tr-empty');
+                            }
+
+                            if (numCol > maxColumn)
+                                maxColumn = numCol;
+
+                            $elm.children().removeAttr('width').remove('height').removeAttr('style');
+                        });
+
+                        //$e.removeAttr('width').removeAttr('height').removeAttr('style').addClass('entrycontent ').addClass(String.format('table-detail-{0}columns', maxColumn));
+                    });
+
+                    var content = rawContent.html();
+                    out = [
+                        '<section class="section" data-component="ShowMoreTextBlock">',
+                         String.format('<div class="sc-inner {0}">', paddingClass),
+                          '<div class="container">',
+                           '<div class="showmore-box">',
+                            content ? content.toString() : '',
+                            '<div class="showmore-action">',
+                             '<a href="#" class="btn-showmore">เพิ่มเติม</a>',
+                            '</div>',
+                           '</div',
+                          '</div>',
+                         '</div>',
+                        '</section>',
+                        popups.join('')
+                    ];
+
+                    return out.join('');
+                }
+            }
+        }
+    };
+
+    function InitializeKWebPageComponent_UserView() {
+
+        var selectors = nurturedComponent.selectors,
+            compSelector = selectors.params,
+            grouSelector = selectors.group,
+            contSelector = selectors.container;
+
+        // Get group
+        var KWebPageComponentGroup = $(grouSelector);
+
+        if (KWebPageComponentGroup.length) {
+            KWebPageComponentGroup.each(function (i1, g1) {
+                var $g1 = $(g1),
+                    KWebPageComponentContainer = $g1.children(contSelector);
+
+                // Remove unused component or none type.
+                if (KWebPageComponentContainer.length) {
+                    KWebPageComponentContainer.filter(function (i) {
+                        var $this = $(this),
+                            compType = $this.find(compSelector.type).text().trim().toLowerCase();
+
+                        return compType === '' || compType === 'none';
+                    }).remove();
+                }
+                // Reload DOM, get components
+                KWebPageComponentContainer = $g1.children(contSelector);
+
+                // Process rest of DOM
+                if (KWebPageComponentContainer.length) {
+                    // // Reorder DOM
+                    // KWebPageComponentContainer.sort(function (a, b) {
+                    //     var oa = Number.parseInvariant($(a).find(compSelector.order).text().trim()),
+                    //         ob = Number.parseInvariant($(b).find(compSelector.order).text().trim());
+                    //     oa = isNaN(oa) ? Number.MAX_VALUE : oa;
+                    //     ob = isNaN(ob) ? Number.MAX_VALUE : ob;
+
+                    //     return oa - ob;
+                    // }).detach().appendTo(g1);
+
+                    // // Render DOM
+                    // KWebPageComponentContainer.each(function (i2, c2) {
+                    //     var $c2 = $(c2),
+                    //         componentParam = {
+                    //             'type': $c2.find(compSelector.type).text().trim(),
+                    //             'html': $c2.find(compSelector.html).find('div.ms-rtestate-field[id$=RichHtmlField]'),
+                    //             'textpos': $c2.find(compSelector.textpos).text().trim(),
+                    //             'image': $c2.find(compSelector.image).find('div.ms-rtestate-field[id$=RichImageField] img').attr('src'),
+                    //             'popup': $c2.find(compSelector.popup).find('div.ms-rtestate-field[id$=RichHtmlField] > table > tbody > tr').children('th, td'),
+                    //             'idPrefix': String.format('nurtured-popup-g{0}-c{1}-', i1, i2)
+                    //         },
+                    //         component = nurturedComponent.components[componentParam.type];
+                    //     if (component &&
+                    //         typeof component.renderer === 'function') {
+                    //         c2.outerHTML = component.renderer(componentParam);
+                    //     }
+                    // });
+
+                    var parentSections = [], nonSections = [], tmpSection = null;
+                    // Reorder DOM
+                    KWebPageComponentContainer.sort(function (a, b) {
+                        var oa = Number.parseInvariant($(a).find(compSelector.order).text().trim()),
+                            ob = Number.parseInvariant($(b).find(compSelector.order).text().trim());
+                        oa = isNaN(oa) ? Number.MAX_VALUE : oa;
+                        ob = isNaN(ob) ? Number.MAX_VALUE : ob;
+
+                        return oa - ob;
+                    }).detach();
+
+                    // Render DOM
+                    KWebPageComponentContainer.each(function (i2, c2) {
+                        var $c2 = $(c2),
+                            componentParam = {
+                                'type': $c2.find(compSelector.type).text().trim(),
+                                'html': $c2.find(compSelector.html).find('div.ms-rtestate-field[id$=RichHtmlField]'),
+                                'textpos': $c2.find(compSelector.textpos).text().trim(),
+                                'image': $c2.find(compSelector.image).find('div.ms-rtestate-field[id$=RichImageField] img').attr('src'),
+                                'popup': $c2.find(compSelector.popup).find('div.ms-rtestate-field[id$=RichHtmlField] > table > tbody > tr').children('th, td'),
+                                'padding': $c2.find(compSelector.padding).text().trim(),
+                                'textalign': $c2.find(compSelector.textalign).text().trim(),
+                                'basecolor': $c2.find(compSelector.basecolor).text().trim(),
+                                'idPrefix': String.format('nurtured-comp-g{0}-c{1}-', i1, i2)
+                            },
+                            component = nurturedComponent.components[componentParam.type];
+
+                        if (component &&
+                            typeof component.renderer === 'function') {
+
+                            var outHTML = ComponentUtil_stripZeroWidthSpace(component.renderer(componentParam));
+
+                            // Check for invisible section.
+                            if (componentParam.type === 'InvisibleSectionName') {
+                                // If tmpSection has already been defined, push it to storage.
+                                if (tmpSection) {
+                                    parentSections.push(tmpSection);
+                                }
+
+                                // Clear
+                                tmpSection = {
+                                    'container': outHTML,
+                                    'children': []
+                                };
+                            } else {
+                                if (tmpSection) {
+                                    tmpSection.children.push(outHTML);
+                                } else {
+                                    // for non-local navigation page.
+                                    nonSections.push(outHTML);
+                                }
+                            }
+
+                        }
+                    });
+
+                    // Support for non-local navigation page.
+                    g1.innerHTML += nonSections.join('');
+                    //$(g1).append($('<div>').html(nonSections.join('')).unwrap());
+
+                    // For the last one that isn't pushed to parentSections.
+                    if (tmpSection)
+                        parentSections.push(tmpSection);
+
+                    // For section.
+                    parentSections.forEach(function (e, i, a) {
+                        g1.innerHTML += $(e.container).html(e.children.join(''))[0].outerHTML;
+                        //$(g1).append($(e.container).html(e.children.join('')));
+                    });
+                }
+
+                // Strip out container tag.
+                g1.outerHTML = g1.innerHTML;
+                //$(g1).replaceWith($(g1).html());
+            });
+        }
+    }
+
+    function InitializeKWebPageComponent_EditMode() {
+
+        var selectors = nurturedComponent.selectors,
+            compSelector = selectors.params,
+            instSelector = selectors.instruction,
+            grouSelector = selectors.group,
+            contSelector = selectors.container,
+            components = nurturedComponent.components;
+
+        function SetVisibleControls($mandatory, $opt, component) {
+            // Hide first
+            $mandatory.hide();
+            $opt.hide();
+
+            try {
+                var visibleCtrls = component.fields,
+                    htmlInstruction = component.htmlInstruction;
+
+                // For HTML instruction
+                $mandatory.filter(function (i) {
+                    return $(this).data('name') === 'KWebPageComponentHTML';
+                }).attr('data-instruction', htmlInstruction).children(instSelector).html(htmlInstruction);
+
+                // Show with visibleCtrls
+                if (Array.isArray(visibleCtrls)) {
+                    $mandatory.show();
+
+                    visibleCtrls.forEach(function (e, i, a) {
+                        $opt.filter(String.format('[data-name$="{0}"]', e)).show();
+                    });
+                }
+            } catch (ex) { }
+        }
+
+
+        var KWebPageComponentGroup = $(grouSelector);
+        KWebPageComponentGroup.addClass('nurtured-edit-mode-panel container').removeClass('ms-hide');
+
+        if (KWebPageComponentGroup.length) {
+            KWebPageComponentGroup.each(function (i1, g1) {
+                var $g1 = $(g1),
+                    KWebPageComponentContainer = $g1.children(contSelector);
+
+                if (KWebPageComponentContainer.length) {
+                    KWebPageComponentContainer.each(function (i2, c2) {
+                        var $c2 = $(c2);
+                        // Use find instead of children to make html layout changing easier.
+                        var compType = $c2.find(compSelector.type).find('select'),
+                            mandatoryCtrls = $c2.find('[data-mandatory]'),
+                            optionalCtrls = $c2.find('[data-optional]');
+
+                        SetVisibleControls(mandatoryCtrls, optionalCtrls, components[compType.val()]);
+
+                        compType.on('change', function (ev) {
+                            ev.preventDefault();
+
+                            // new value
+                            var ctrlName = ev.target.value;
+
+                            SetVisibleControls(mandatoryCtrls, optionalCtrls, components[ctrlName]);
+
+                            return false;
+                        });
+                    });
+                }
+            });
+        }
+    }
+
+    function Remove_NurturedHiddenFromView() {
+        $('.nurtured-HiddenFromView').removeClass('nurtured-HiddenFromView');
+    }
+
+    // Main
+    (function () {
+        var loadEveryViews = [],
+            loadOnlyUserView = [],
+            loadOnlyEditMode = [];
+
+        // Prepare menu structure.
+        loadEveryViews.push(function () {
+
+            // Disable variation
+            //SetVariations();
+        });
+
+        loadOnlyUserView.push(function () {
+            //RTEHtmlFormatter();
+
+            InitializeKWebPageComponent_UserView();
+        });
+
+        loadOnlyEditMode.push(function () {
+
+            InitializeKWebPageComponent_EditMode();
+            Remove_NurturedHiddenFromView();
+
+            (window.RTE) && (function () {
+                //RTETool();
+                //RTEOrdering();
+            })();
+        });
+
+        _spBodyOnLoadFunctions.push(function () {
+            // Global component
+            [ ].forEach.call(loadEveryViews, function (e, i, a) {
+                e();
+            });
+            // Design component
+            if (PageUtil_isInEditMode()) {
+                [ ].forEach.call(loadOnlyEditMode, function (e, i, a) {
+                    e();
+                });
+            } else {
+                [ ].forEach.call(loadOnlyUserView, function (e, i, a) {
+                    e();
+                });
+            }
+        });
+    })();
+})(window.jQuery);

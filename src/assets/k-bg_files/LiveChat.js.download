@@ -1,0 +1,301 @@
+﻿
+var lc_formatURL = "";
+var lc_page_url = "";
+var lc_max_lc_short_url = 45;
+var lc_short_url = "";
+var lc_tooltip_delay = 5000;
+var lc_tooltip_delay_fade = 1000;
+
+var charConfig = {};
+var c_lc_URL = "";
+
+function getURLWebChat() {
+    if (c_lc_URL != "") {
+        return c_lc_URL;
+    } else {
+        if (lc_page_url == ""){
+            lc_page_url = (_spPageContextInfo.webAbsoluteUrl + _spPageContextInfo.serverRequestPath).toLowerCase();
+        }
+        if (lc_page_url.indexOf("/th/business") != -1 || lc_page_url.indexOf("/en/business") != -1) {
+            return getUrlByConfigIndex(1);
+        } else {
+            return getUrlByConfigIndex(0);
+        }
+    }
+}
+
+
+function getMobileOperatingSystem_LiveChat() {
+    var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+    // Windows Phone must come first because its UA also contains "Android"
+    if (/windows phone/i.test(userAgent)) {
+        return "Windows Phone";
+    }
+
+    if (/android/i.test(userAgent)) {
+        return "Android";
+    }
+
+    // iOS detection from: http://stackoverflow.com/a/9039885/177710
+    if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        return "iOS";
+    }
+
+    return "computer_OS";
+}
+
+$(document).ready(function () {
+
+    //try {
+    //    var topLeft = $('.localnav.slicknav .h2.heading a');
+    //    topLeft.css("visibility", "visible");
+    //} catch (e) {
+
+    //}
+
+
+    lc_page_url = (_spPageContextInfo.webAbsoluteUrl + _spPageContextInfo.serverRequestPath).toLowerCase();
+    lc_short_url = getShortURL();
+
+    //lc_formatURL = "https://kbc01.kasikornbank.com/system/templates/chat/##TYPE##/chat.html?subActivity=Chat&entryPointId=##entryPointId##&templateName=sunburst&languageCode=en&countryCode=US&ver=v11";
+    //lc_formatURL = "https://10.211.249.134/system/templates-k3/chat/##TYPE##/chat.html?subActivity=Chat&entryPointId=##entryPointId##&templateName=sunburst&languageCode=en&countryCode=US&ver=v11";
+    lc_formatURL = "https://kbc01.kasikornbank.com/system/templates/chat/##TYPE##/chat.html?subActivity=Chat&entryPointId=##entryPointId##&templateName=sunburst&languageCode=en&countryCode=US&ver=v11";
+
+    lc_formatURL += "&&fieldname_1=##fieldname_1##";
+    lc_formatURL += "&fieldname_2=##fieldname_2##";
+    lc_formatURL += "&fieldname_3=##fieldname_3##";
+    lc_formatURL += "&fieldname_4=##fieldname_4##";
+    lc_formatURL += "&fieldname_5=##fieldname_5##" 
+    lc_formatURL += "&fieldname_6=##fieldname_6##"; 
+    lc_formatURL += "&fieldname_7=##fieldname_7##";
+    lc_formatURL += "&referer=##fieldname_8##";
+
+    charConfig = {
+        "list": [
+          { //[0] //Retail
+              key: "/personal/Debit-Card,/personal/Credit-Card,/personal/Express-Cash-Card,/th/Contact/Pages/,/en/Contact/Pages/,/personal/digital-banking"
+              , value: {
+                  "Type": langIsTH() ? "CU_ENT1_THAI" : "CU_ENT1_ENG"
+                  , "entryPointId": langIsTH() ? "1003" : "1003"
+                  , "fieldname_1": "Customer"
+                  , "fieldname_2": "..."
+                  , "fieldname_3": "info@kasikornbank.com"
+                  , "fieldname_4": "028888888"
+                  , "fieldname_5": getShortURL()
+                  , "fieldname_6": langIsTH() ? "RetailThai" : "RetaiEnglish"
+                  , "fieldname_7": " "
+                  , "fieldname_8": langIsTH() ? "http://kbc01.kasikornbank.com/CU_THAI_KBANK.aspx" : "http://kbc01.kasikornbank.com/CU_ENG_KBANK.aspx"
+              }
+          },
+          { //[1] //Coporate
+              key: "/business/sme/loan/,/business/cash-management/"
+              , value: {
+                  "Type": langIsTH() ? "CC_ENT1_THAI" : "CC_ENT1_ENG"
+                  , "entryPointId": langIsTH() ? "1002" : "1001"
+                  , "fieldname_1": "Customer"
+                  , "fieldname_2": "..."
+                  , "fieldname_3": "KBANK"
+                  , "fieldname_4": "info@kasikornbank.com"
+                  , "fieldname_5": "028888822"
+                  , "fieldname_6": getShortURL()
+                  , "fieldname_7": " "
+                  , "fieldname_8": langIsTH() ? "http://kbc01.kasikornbank.com/CC_THAI_KBANK.aspx" : "http://kbc01.kasikornbank.com/CC_ENG_KBANK.aspx"
+              }
+          }
+        ]
+    };
+
+    var result = getMobileOperatingSystem_LiveChat();
+    if (result == "computer_OS") {
+        
+        $("#livechat").css("display", "none");
+
+        //for test only
+        //include contact page too
+        if (lc_page_url.indexOf("/th/personal/pages/home.aspx") != -1 || lc_page_url.indexOf("/en/personal/pages/home.aspx") != -1 || lc_page_url.indexOf("/th/business/sme/pages/sme.aspx") != -1 || lc_page_url.indexOf("/en/business/sme/pages/sme.aspx") != -1 || lc_page_url.indexOf("/th/business/pages/business.aspx") != -1 || lc_page_url.indexOf("/en/business/pages/business.aspx") != -1 || lc_page_url.indexOf("/th/contact/th/contact/pages/contact.aspx") != -1 || lc_page_url.indexOf("/en/contact/th/contact/pages/contact.aspx") != -1) {
+            $("#livechat").css("display", "inherit");
+            $("#livechat").on("click", function () {
+                window.open(getURLWebChat(), "_KbankLiveChat", "width=350,height=550");
+            });
+        }
+
+        setTimeout(function () { setChat() }, 240000);
+       
+    } else {
+        //setChat();
+        $("#livechat").css("display", "none");
+
+        //$("#livechat").on("click", function () {
+        //    window.open(getURLWebChat(), "_KbankLiveChat", "width=350,height=550");
+        //});
+    }
+    
+    setTimeout(function () {
+        try {
+            $("a[href*='rt07.kasikornbank.com/PrintReceipt/Service/InquiryBankingPlus.aspx'][class='link']").on('click', function () {
+                ga('send', 'event', 'KBank', 'KBank_PrintR', 'Click:PrintR');
+            });
+        } catch (e) {
+
+        }
+        
+    }, 1000);
+
+});
+
+function getShortURL() {
+    var result = _spPageContextInfo.serverRequestPath.split(/[?#]/)[0].replace(".aspx", "").replace("/Pages", "");
+    if (result.length > lc_max_lc_short_url) {
+        var newresult = "";
+        for (var i = result.split("/").length-1; i >= 0 ; i--) {
+            if (("/" + result.split("/")[i] + newresult).length <= lc_max_lc_short_url) {
+                newresult = ("/" + result.split("/")[i] + newresult);
+            }
+        }
+        result = newresult;
+    } else {
+        return result;
+    }
+    return result;
+}
+
+function langIsTH() {
+    return (_spPageContextInfo.currentCultureName.substr(0, 2) == "th" ? true : false);
+}
+
+function setChat() {
+    var popup_url = "";
+    for (var index = 0; index < charConfig.list.length; index++) {
+        if (configMatch(charConfig.list[index].key.toLowerCase()) && popup_url == "") { //case => found match
+            var chatparam_Type = charConfig.list[index].value.Type;
+            var chatparam_entryPointId = charConfig.list[index].value.entryPointId;
+            var chatparam_fieldName_1 = charConfig.list[index].value.fieldname_1;
+            var chatparam_fieldName_2 = charConfig.list[index].value.fieldname_2;
+            var chatparam_fieldName_3 = charConfig.list[index].value.fieldname_3;
+            var chatparam_fieldName_4 = charConfig.list[index].value.fieldname_4;
+            var chatparam_fieldName_5 = charConfig.list[index].value.fieldname_5;
+            var chatparam_fieldName_6 = charConfig.list[index].value.fieldname_6;
+            var chatparam_fieldName_7 = charConfig.list[index].value.fieldname_7;
+            var chatparam_fieldName_8 = charConfig.list[index].value.fieldname_8;
+            
+            popup_url = lc_formatURL; 
+            popup_url = popup_url.replace("##TYPE##", chatparam_Type);
+            popup_url = popup_url.replace("##entryPointId##", chatparam_entryPointId);
+            popup_url = popup_url.replace("##fieldname_1##", chatparam_fieldName_1);
+            popup_url = popup_url.replace("##fieldname_2##", chatparam_fieldName_2);
+            popup_url = popup_url.replace("##fieldname_3##", chatparam_fieldName_3);
+            popup_url = popup_url.replace("##fieldname_4##", chatparam_fieldName_4);
+            popup_url = popup_url.replace("##fieldname_5##", chatparam_fieldName_5);
+            popup_url = popup_url.replace("##fieldname_6##", chatparam_fieldName_6);
+            popup_url = popup_url.replace("##fieldname_7##", chatparam_fieldName_7);
+            popup_url = popup_url.replace("##fieldname_8##", chatparam_fieldName_8);
+
+            c_lc_URL = popup_url;
+
+            var htmlChat = "<div class='webchat' style='cursor:pointer'>" +
+            " <div class='webchat-inner'>" +
+            " <div class='webchat-tooltip'>" +
+            " <a id='tooltip-close' class='ic ic-close'></a>" +
+            " <span class='icon' style='padding-top: 7px;'><img src='/SiteCollectionDocuments/assets/img/icon/e-girl.png' alt=''></span>" +
+            (langIsTH() ? " <span class='text'>ให้เราช่วยเหลือคุณ</span>" : " <span class='text'>Let us help you</span>") +
+            " </div>" +
+            " <a id='chatbox' class='webchat-btn'></a>" +
+            " </div>" +
+            " </div>";
+
+            $("body").append(htmlChat);
+            $("#chatbox").click(function () {
+                window.open(popup_url, "_KbankLiveChat", "width=350,height=550");
+            });
+            $(".webchat-tooltip").delay(lc_tooltip_delay).fadeOut(lc_tooltip_delay_fade);
+            
+            //on bottom display same balloon
+            $("#livechat").css("display", "inherit");
+            $("#livechat").on("click", function () {
+                window.open(getURLWebChat(), "_KbankLiveChat", "width=350,height=550");
+            });
+
+            var kb_webchat = $(".webchat"),
+            kb_webchat_tooltip = kb_webchat.find(".webchat-tooltip"),
+            kb_webchat_close = kb_webchat.find("#tooltip-close");
+
+            if (kb_webchat.length) {
+                kb_webchat_close.click(function (e) {
+                    //e.preventDefault();
+                    kb_webchat_tooltip.fadeOut();
+                });
+            }
+
+            $("#chatbox").mouseover(function () {
+                kb_webchat_tooltip.fadeIn();
+            });
+
+            $("#chatbox").mouseout(function () {
+                kb_webchat_tooltip.fadeOut()
+            });
+
+        }
+    }
+}
+
+function getUrlByConfigIndex(index) {
+    var popup_url = "";
+    
+    var chatparam_Type = charConfig.list[index].value.Type;
+    var chatparam_entryPointId = charConfig.list[index].value.entryPointId;
+    var chatparam_fieldName_1 = charConfig.list[index].value.fieldname_1;
+    var chatparam_fieldName_2 = charConfig.list[index].value.fieldname_2;
+    var chatparam_fieldName_3 = charConfig.list[index].value.fieldname_3;
+    var chatparam_fieldName_4 = charConfig.list[index].value.fieldname_4;
+    var chatparam_fieldName_5 = charConfig.list[index].value.fieldname_5;
+    var chatparam_fieldName_6 = charConfig.list[index].value.fieldname_6;
+    var chatparam_fieldName_7 = charConfig.list[index].value.fieldname_7;
+    var chatparam_fieldName_8 = charConfig.list[index].value.fieldname_8;
+    
+    popup_url = lc_formatURL;
+    popup_url = popup_url.replace("##TYPE##", chatparam_Type);
+    popup_url = popup_url.replace("##entryPointId##", chatparam_entryPointId);
+    popup_url = popup_url.replace("##fieldname_1##", chatparam_fieldName_1);
+    popup_url = popup_url.replace("##fieldname_2##", chatparam_fieldName_2);
+    popup_url = popup_url.replace("##fieldname_3##", chatparam_fieldName_3);
+    popup_url = popup_url.replace("##fieldname_4##", chatparam_fieldName_4);
+    popup_url = popup_url.replace("##fieldname_5##", chatparam_fieldName_5);
+    popup_url = popup_url.replace("##fieldname_6##", chatparam_fieldName_6);
+    popup_url = popup_url.replace("##fieldname_7##", chatparam_fieldName_7);
+    popup_url = popup_url.replace("##fieldname_8##", chatparam_fieldName_8);
+    
+    return popup_url;
+}
+
+function configMatch(v) {
+    var vlist = v.split(",");
+    for (var iv = 0; iv < vlist.length; iv++) {
+        if (lc_page_url.indexOf(vlist[iv]) != -1) {
+            return true;
+        }
+    }
+    return false;
+}
+
+$(function () {
+    var kb_webchat = $(".webchat"),
+    kb_webchat_tooltip = kb_webchat.find(".webchat-tooltip"),
+    kb_webchat_close = kb_webchat.find("#tooltip-close");
+
+    if (kb_webchat.length) {
+        kb_webchat_close.click(function (e) {
+            //e.preventDefault();
+            kb_webchat_tooltip.fadeOut();
+        });
+    }
+
+    $("#chatbox").mouseover(function () {
+        kb_webchat_tooltip.fadeIn();
+    });
+
+    $("#chatbox").mouseout(function () {
+        kb_webchat_tooltip.fadeOut()
+    });
+
+});

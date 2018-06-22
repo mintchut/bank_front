@@ -1,0 +1,81 @@
+﻿// JavaScript source code
+
+function GetCurrentLang() {
+    return _spPageContextInfo.currentCultureName.substr(0, 2);
+}
+
+
+$(document).ready(function () {
+    var holder = "ค้นหาผลิตภัณฑ์, โปรโมชั่น";
+    
+    if (GetCurrentLang().toUpperCase() == "EN")
+    {
+        holder = "Search for Product, Promotion";
+    }
+
+
+    $('.tool-search').click(function () {
+        var PopUpSearch = '<div id="BGPopUpSearch" class="mfp-bg icw-popup-function mfp-ready" style = "display:block;"></div>\
+                                 <div id="ScopeSearch" style = "display:none;" class="mfp-wrap mfp-close-btn-in mfp-align-top mfp-auto-cursor icw-popup-function mfp-ready" tabindex="-1" style="overflow-x: hidden; overflow-y: auto;">\
+                                    <div class="mfp-container mfp-s-ready mfp-inline-holder">\
+                                        <div class="mfp-content">\
+                                            <div id="popup-search" class="icw">\
+                                                <script>\
+                                                    $(function () {\
+                                                        $(".search-form").on("submit", function () { return false; });\
+                                                        $("#calltoaction").click(function () {\
+                                                            var d = new Date();\
+                                                            d.setTime(d.getTime() + (1*24*60*60*1000));\
+                                                            var expires = "expires="+ d.toUTCString();\
+                                                            document.cookie = "BeforeSearch" + "=" + window.location + ";" + expires + ";path=/";\
+                                                        \
+                                                            var link = "/' + GetCurrentLang() + '/search/Pages/results.aspx#k=" + encodeURI($("#search").val());\
+                                                            window.location = link;\
+                                                        });\
+                                                        $("#search").keypress(function (e) {\
+                                                            if (e.which == 13) {\
+                                                                $("#calltoaction").click();\
+                                                            }\
+                                                        });\
+                                                    });\
+                                            </script>\
+                                            <div class="search-nav">\
+                                                <div class="container">\
+                                                    <form class="icw-form search-form">\
+                                                        <div class="icw-input input-search">\
+                                                            <input type="text" name="search" id="search" placeholder="' + holder + '">\
+                                                            <!--label for="" class="icw-label overlabel"' + holder + '</label-->\
+                                                            <ul class="action">\
+                                                                <li><button type="button" id="calltoaction" class="calltoaction"><i class="ic ic-search"></i></button></li>\
+                                                            </ul>\
+                                                            <p class="icw-inputnote">พบทั้งหมด 0 ( 0.1 วินาที )</p>\
+                                                        </div>\
+                                                    </form>\
+                                                </div>\
+                                            </div><!-- end .search-nav -->\
+                                            <button id="ClosePopUpSearch" title="Close (Esc)" type="button" class="mfp-close">×</button>\
+                                        </div>\
+                                    </div>\
+                                </div>\
+                                </div>';
+        $('#popup-search').remove();
+        $('body').append(PopUpSearch);
+        $('header').css('display', 'none');
+
+       
+        $('#BGPopUpSearch').fadeIn(function () {
+            $('#ScopeSearch').fadeIn();
+        });
+
+
+        $('#ClosePopUpSearch').click(function () {
+            $('#ScopeSearch').fadeOut(function () {
+                        
+                $('#BGPopUpSearch').remove();
+                $('#ScopeSearch').remove();
+            });
+                   
+            $('header').css('display', 'block');
+        });
+    });
+});

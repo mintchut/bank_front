@@ -1,0 +1,34 @@
+// component css goes here
+.text_group{
+    text-align: left; 
+    border: 0ch;
+    width:30%;
+    margin-left: 33%;
+    background: rgb(255, 255, 255);
+    padding: 2%;
+  
+    -webkit-box-shadow: 15px 15px 78px 3px rgba(74,74,74,0.5);
+    -moz-box-shadow: 15px 15px 78px 3px rgba(74,74,74,0.5);
+    box-shadow: 15px 15px 78px 3px rgba(74,74,74,0.5);
+  }
+
+.data{
+    float: right;
+    text-align: right; 
+}
+
+.backbtn{
+    background-color: #00a950; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 25px;
+    display: inline-block;
+    font-size: 13px;
+}
+
+.backbtn:hover {
+    background: #00632e;
+  }

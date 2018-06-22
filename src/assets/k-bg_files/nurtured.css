@@ -1,0 +1,43 @@
+﻿#ms-designer-ribbon {
+    display: none;
+    /*position: fixed;
+    z-index: 10000;*/
+}
+[id$='TopNavigationMenu'] {
+    display: none;
+}
+#s4-workspace {
+    -webkit-overflow-scrolling: touch;
+}
+#s4-bodyContainer {
+    padding-bottom: 0;
+}
+#s4-titlerow {
+    padding: 0;
+    height: auto;
+}
+#pageStatusBar {
+    margin-bottom: 0 !important;
+}
+.ms-cui-tabContainer {
+    z-index: 1000;
+}
+
+/* Height from theme */
+.mm-menu {
+    top: 57px;
+}
+.mm-panels > .mm-panel::before {
+    height: 0;
+}
+.mm-navbar {
+    top: 0;
+}
+
+/* Fixed for mobile menu */
+@media screen and (max-width: 480px) {
+
+}
+@media screen and (max-width:1024px) {
+    #ms-designer-ribbon { display: none !important;}
+}

@@ -1,0 +1,64 @@
+<div style="background: linear-gradient(to bottom, #07A94D 0%, #ffffff 100%);">
+
+    <br>
+    <a href="https://www.kasikornbank.com">
+      <img width="300" alt="Kbank Logo" src="\assets\kbank-header.png" style="margin-left: 2%">
+    </a>
+    <br>
+    <br>
+  </div>
+
+
+<div style="text-align:center;padding: 0;">
+
+</div>
+
+
+<div style="text-align: center; vertical-align: middle;">
+  <h2 style="margin-top:0px;">
+    <img width="25" alt="pp Logo" src="\assets\cancel.png">
+    <br>
+    <b>Cancellation PromptPay</b>
+  </h2>
+  <p style="color: gray;">Please check your information before unlinked Prompt pay.</p>
+
+
+  <div class="text_group">
+    <label for="acnumber">
+      <b>Account name :</b>
+      <span class="data">
+        <b>{{name}}</b>
+      </span>
+      <br>
+      <span class="data">
+        <img width="20" alt="Kbank Logo" src="\assets\logo.png">
+        <b> {{account}}</b>
+      </span>
+    </label>
+    <br>
+    <br>
+    <br>
+    <label for="type">
+      <b>Account type :</b>
+    </label>
+    <span class="data">{{type}}</span>
+    <br>
+    <br>
+
+    <br>
+    <label for="recnumber">
+      <b>Linked number :</b>
+    </label>
+    <span class="data">{{num}}</span>
+    <br>
+    <br>
+
+
+
+    <button class="backbtn" (click)="clickBack();">
+      <span>Back</span>
+    </button>
+    <button type="submit" class="nextbtn" (click)="clickNext();">
+      <span>Next</span>
+    </button>
+  </div>

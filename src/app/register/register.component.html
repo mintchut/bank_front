@@ -1,0 +1,91 @@
+<div style="background: linear-gradient(to bottom, #07A94D 0%, #ffffff 100%);">
+
+    <br>
+    <a href="https://www.kasikornbank.com">
+      <img width="300" alt="Kbank Logo" src="\assets\kbank-header.png" style="margin-left: 2%">
+    </a>
+    <br>
+    <br>
+  </div>
+
+
+
+<div style="text-align:center;padding: 0;">
+  <div class="head">
+    <h2 style="margin-top:0px;">
+      REGISTER
+      <img width="80" alt="Kbank Logo" src="\assets\pp_logo.jpg">
+    </h2>
+
+    <p style="color: gray;">Please fill in this form to register prompt pay.</p>
+  </div>
+
+  <div class="text_group">
+    <label for="acnumber">
+      <b>Account name :</b>
+      <span class="data">
+        <b>{{name}}</b>
+      </span>
+      <br>
+      <span class="data">
+        <img width="20" src="\assets\logo.png">
+        <b> {{account}}</b>
+      </span>
+    </label>
+    <br>
+    <br>
+
+
+
+
+    <label for="type">
+      <b>Account type :</b>
+    </label>
+    <span class="data">
+      <div id="typeSelect">
+        <img height="35px" class="icon" alt="Kbank Logo" src="\assets\phone.png">
+        <label class="phone">
+          <input type="radio" name="toggle" value="mobile" [(ngModel)]="type" checked>
+          <span> Phone Number</span>
+        </label>
+        <br>
+        <br>
+        <img height="35px" class="icon" alt="Kbank Logo" src="\assets\idcard.png">
+        <label class="citizen">
+          <input type="radio" name="toggle" value="IDCard"  [(ngModel)]="type">
+          <span> Citizen Number</span>
+        </label>
+      </div>
+    </span>
+   
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+
+
+    <label for="recnumber">
+      <b>Linked number</b>
+    </label>
+    <span class="data">
+
+      <input type="text" placeholder="Enter PromptPay number" [(ngModel)]="linkedNum" required>
+
+    </span>
+    <br>
+    <br>
+
+    <br>
+
+    <button class="backbtn" (click)="clickBack();">
+      <span>Back</span>
+    </button>
+    <button type="submit" class="nextbtn" (click)="clickNext();">
+      <span>Next</span>
+    </button>
+  </div>
+</div>

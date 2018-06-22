@@ -1,0 +1,98 @@
+<div style="background: linear-gradient(to bottom, #07A94D 0%, #ffffff 100%);">
+
+    <br>
+    <a href="https://www.kasikornbank.com">
+      <img width="300" alt="Kbank Logo" src="\assets\kbank-header.png" style="margin-left: 2%">
+    </a>
+    <br>
+    <br>
+  </div>
+
+
+
+<div style="text-align:center;padding: 0;">
+  <div class="head">
+
+    <h2 style="
+margin-top:0px; 
+color: #99867C; ">
+      Transfer by
+      <img height="28" alt="Kbank Logo" src="\assets\pp_logo.jpg">
+    </h2>
+  </div>
+
+  <div class="text_group">
+    <label for="acnumber">
+      <b>From</b>
+      <span class="data">
+        <b>{{name}}</b>
+      </span>
+      <br>
+      <span class="data">
+        <img width="20" alt="Kbank Logo" src="\assets\logo.png">
+        <b> {{account}}</b>
+      </span>
+    </label>
+    <br>
+    <br>
+    <br>
+    <label for="recnumber">
+      <b>To</b>
+    </label>
+    <span class="data">
+      <input type="text" placeholder="Enter PromptPay number" name="number" [(ngModel)]="recnum" required>
+    </span>
+    <br>
+    <label for="type">
+      <br>
+      <b>Account type</b>
+    </label>
+    <span class="data">
+      <div id="typeSelect">
+        <img height="35px" class="icon" alt="Kbank Logo" src="\assets\phone.png">
+        <label class="phone">
+          <input type="radio" name="toggle" value="mobile"  [(ngModel)]="type">
+          <span> Phone Number</span>
+        </label>
+        <br>
+        <br>
+        <img height="35px" class="icon" alt="Kbank Logo" src="\assets\idcard.png">
+        <label class="citizen">
+          <input type="radio" name="toggle" value="IDCard" [(ngModel)]="type">
+          <span> Citizen Number</span>
+        </label>
+        
+      </div>
+    </span>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+
+
+
+    <label for="recnumber">
+      <b>Amount </b>
+    </label>
+    <span class="data">
+      <input type="number" placeholder="Thai Baht" name="number" [(ngModel)]="transAmount" required> </span>
+  
+    <br>
+    <br> <label for="note">
+   <b>Note </b>   
+    </label>
+    <span class="data">
+    <input type="text" placeholder="Note" [(ngModel)]="note">
+      </span>
+<br><br>
+    <button class="backbtn" (click)="clickBack();">
+      <span>Back</span>
+    </button>
+    <button type="submit" class="nextbtn" (click)="clickNext();">
+      <span>Next</span>
+    </button>
+  </div>
+</div>

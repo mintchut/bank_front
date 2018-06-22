@@ -1,0 +1,106 @@
+<div style="background: linear-gradient(to bottom, #07A94D 0%, #ffffff 100%);">
+
+    <br>
+    <a href="https://www.kasikornbank.com">
+      <img width="300" alt="Kbank Logo" src="\assets\kbank-header.png" style="margin-left: 2%">
+    </a>
+    <br>
+    <br>
+  </div>
+
+
+
+<div style="text-align:center;padding: 0;">
+  <div class="head">
+
+    <h2 style="
+margin-top:0px; 
+color: #99867C; ">
+      Transfer Money
+    </h2>
+  </div>
+
+  <div class="text_group">
+    <label for="acnumber">
+      <b>From</b>
+      <span class="data">
+        <b>{{name}}</b>
+      </span>
+      <br>
+      <span class="data">
+        <img width="20" alt="Kbank Logo" src="\assets\logo.png">
+        <b> {{account}}</b>
+      </span>
+    </label>
+    <br>
+    <br>
+    <br>
+    <label for="recnumber">
+      <b>To</b>
+    </label>
+    <span class="data">
+      <input type="text" placeholder="Enter Account number" name="number" [(ngModel)]="recAcNum" required>
+    </span>
+    <br>
+    <label for="type">
+      <br>
+      <b>Bank Account :</b>
+    </label>
+    <span class="data">
+         <!-- DO BANK SELECTTTTT -->
+         <!-- ใส่ธนาคารให้ครบ -->
+         <select [(ngModel)]="bankCode">
+                <option value="004">ธ. กสิกรไทย</option>
+                <option value="002">ธ. กรุงเทพ</option>
+                <option value="011">ธ. ทหารไทย </option>
+                <option value="014">ธ. ไทยพาณิชย์  </option>
+                <option value="017"> ธ. ซิตี้แบงก์ </option>
+                <option value="020"> ธ. สแตนดาร์ดชาร์เตอร์ด  </option>
+                <option value="022"> ธ. ซีไอเอ็มบี  </option>
+                <option value="024"> ธ. ยูโอบี  </option>
+                <option value="025"> ธ. กรุงศรีอยุธยา  </option>
+                <option value="030"> ธ. ออมสิน </option>
+                <option value="031"> ธ. ฮ่องกงและเซี่ยงไฮ้คอร์ปอเรชั่น  </option>
+                <option value="065"> ธ. ธนชาต  </option>
+                <option value="006"> ธ. กรุงไทย  </option>
+                <option value="066"> ธ. อิสลามแห่งประเทศไทย </option>
+                <option value="067"> ธ. ทิสโก้ </option>
+                <option value="069"> ธ. เกียรตินาคิน  </option>
+                <option value="070"> ธ. ไอซีบีซี  </option>
+                <option value="071"> ธ. ไทยเครดิต  </option>
+                <option value="073"> ธ. แลนด์ แอนด์ เฮ้าส์  </option>
+          </select>
+
+    </span>
+    <br>
+    <br>
+
+
+
+
+    <label for="recnumber">
+      <b>Amount </b>
+    </label>
+    <span class="data">
+      <input type="number" placeholder="Thai Baht" name="number" [(ngModel)]="transAmount" required>
+    </span>
+    <br>
+    <br>
+    <label for="recnumber">
+      <b>Note : </b>
+    </label>
+    <span class="data">
+      <input type="text" placeholder="Note" [(ngModel)]="note">
+    </span>
+    <br>
+    <br>
+    <br>
+
+    <button class="backbtn" (click)="clickBack();">
+      <span>Back</span>
+    </button>
+    <button type="submit" class="nextbtn" (click)="clickNext();">
+      <span>Next</span>
+    </button>
+  </div>
+</div>

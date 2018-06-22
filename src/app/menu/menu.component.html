@@ -1,0 +1,90 @@
+<div style="background: linear-gradient(to bottom, #07A94D 0%, #ffffff 100%);">
+
+  <br>
+  <a href="https://www.kasikornbank.com">
+    <img width="300" alt="Kbank Logo" src="\assets\kbank-header.png" style="margin-left: 2%">
+  </a>
+  <br>
+  <br>
+</div>
+
+<!-- Account:
+      <select [(ngModel)]="accountNum" (ngModelChange)="onChange($event)" style="z-index: 999;">
+        <option *ngFor="let acc of accounts" value="{{acc}}">{{accountNum}}</option>
+      </select> -->
+<div style="float: right; margin-left: 2%">
+    <iframe width="448" height="252" src="https://www.youtube.com/embed/7sFzDIB6uQ4" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+<p>
+    <br>​โลกเปลี่ยนไป ความประทับใจต้องไม่เปลี่ยนแปลง<br><strong style="color:#009900;"><span style="color:#009900;"><span style="color:#009900;">#ประทับใจเหมือนเดิม</span></span></strong><br><strong>ธนาคารกสิกรไทย</strong><br><strong> บริการทุกระดับประทับใจ</strong></p>
+  </div>
+  
+    <div class="text_group">
+    
+    <div class="showbalance">
+      <h3>Balance
+        <br>
+        <br>{{balance}}</h3>
+      <button class="statement" (click)="callTransaction();">statement</button>
+      
+      <li *ngFor="let transaction of transaction">{{transaction}}
+
+    </div>
+    
+
+
+
+
+    <div class="data">
+      
+      <div class="tooltip">
+        <img width="180" alt="pp Logo" src="\assets\pp_logo.jpg">
+        <span class="tooltiptext">
+          <br>
+          <b>Prompt Pay Account</b>
+          <br>
+          <br>
+          <span>
+            Account name : {{_var.accountName}}
+            <br> Prompt pay Account : {{_var.number}}
+            <br> Account type : {{_var.type}}
+            <br> Linked Bank Account : {{_var.accountNum}}
+            <br> Register Date & Time : {{_var.regDTM}}
+            <br> Last Login : {{_var.loginDTM}}
+            <br>
+          </span>
+          <br>
+          <br>
+        </span>
+      </div>
+      <br>
+      <div class="dropdown">
+      <button type="submit" class="transbtn" >
+        <span>Transfer</span>
+      </button>
+      <div class="dropdown-content">
+          <a class="transDropbtn" (click)="transferPromptClick();">Prompt Pay</a>
+          <a class="transDropbtn" (click)="transferClick();">Bank Account</a>
+        </div>
+      </div>
+      <br>
+      <button type="submit" class="button" (click)="onClick();">
+        <span>Register</span>
+      </button>
+      <br>
+      <button type="submit" class="cancelbtn" (click)="cancelClick();">
+        <span>Cancel</span>
+      </button>
+      <br>
+      <button type="submit" class="logoutbtn" (click)="logoutClick();">
+        <span>Logout</span>
+      </button>
+      
+
+
+    </div>
+  </div>
+
+
+
+
+  

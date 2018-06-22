@@ -1,0 +1,702 @@
+﻿/*H3.ms-rteElement-H3White {
+    -ms-name: Slide Heading - White;
+
+    color: $ci_color_white;
+    font-family: $ci_font;
+    font-size: 75px;
+    line-height: 0.8;
+    margin-bottom: 10px;
+}
+
+H1.ms-rteElement-H1White {
+    -ms-name: SC Heading - White;
+
+    color: $ci_color_white;
+    font-family: $ci_font;
+    font-size: 65px;
+}
+
+div.ms-rteElement-divSC {
+    -ms-name: DIV SC;
+
+    color: #f00;
+}
+div.ms-rteElement-divSlide {
+    -ms-name: DIV Slide;
+
+    color: #ff0;
+}
+
+span.ms-rteStyle-divSC {
+    -ms-name: SC SPAN;
+    color: #0f0;
+}*/
+/*h2.ms-rteElement-SBH2White {
+    -ms-name: H2 White;
+
+    color: $ci_color_white;
+    text-shadow: 1px 1px 5px #333;
+}
+h2.ms-rteElement-SBH2DarkGrey {
+    -ms-name: H2 Dark Grey;
+
+    color: $ci_color_darkgrey;
+}
+h2.ms-rteElement-SBH2Green {
+    -ms-name: H2 Green;
+
+    color: $ci_color_green;
+}
+
+[class*='ms-rteTable-SB'] {
+    h2 {
+        font-size: 65px;
+    }
+    p {
+        font-size: 16px;
+    }
+}*/
+/*table.ms-rteTable-SBLeft {
+        -ms-name: $display;
+
+        border: $handler_tableBorder;
+        td {
+            border: $handler_cellBorder;
+        }
+
+        .ms-rteTableHeaderRow-SBLeft {
+            th.ms-rteTableHeaderEvenCol-SBLeft {
+                font-weight: bold;
+            }
+            th.ms-rteTableHeaderOddCol-SBLeft {
+                font-weight: bold;
+            }
+        }
+        .ms-rteTableOddRow-SBLeft {
+            .ms-rteTableEvenCol-SBLeft {
+
+            }
+            .ms-rteTableOddCol-SBLeft {
+
+            }
+        }
+        .ms-rteTableEvenRow-SBLeft {
+            .ms-rteTableEvenCol-SBLeft {
+
+            }
+            .ms-rteTableOddCol-SBLeft {
+
+            }
+        }
+    }*/
+/*table.ms-rteTable-SBCenter {
+        -ms-name: $display;
+
+        border: $handler_tableBorder;
+        td {
+            border: $handler_cellBorder;
+        }
+
+        .ms-rteTableHeaderRow-SBCenter {
+            th.ms-rteTableHeaderEvenCol-SBCenter {
+                font-weight: bold;
+            }
+            th.ms-rteTableHeaderOddCol-SBCenter {
+                font-weight: bold;
+            }
+        }
+        .ms-rteTableOddRow-SBCenter {
+            .ms-rteTableEvenCol-SBCenter {
+
+            }
+            .ms-rteTableOddCol-SBCenter {
+
+            }
+        }
+        .ms-rteTableEvenRow-SBCenter {
+            .ms-rteTableEvenCol-SBCenter {
+
+            }
+            .ms-rteTableOddCol-SBCenter {
+
+            }
+        }
+    }*/
+/*table.ms-rteTable-SBRight {
+        -ms-name: $display;
+
+        border: $handler_tableBorder;
+        td {
+            border: $handler_cellBorder;
+        }
+
+        .ms-rteTableHeaderRow-SBRight {
+            th.ms-rteTableHeaderEvenCol-SBRight {
+                font-weight: bold;
+            }
+            th.ms-rteTableHeaderOddCol-SBRight {
+                font-weight: bold;
+            }
+        }
+        .ms-rteTableOddRow-SBRight {
+            .ms-rteTableEvenCol-SBRight {
+
+            }
+            .ms-rteTableOddCol-SBRight {
+
+            }
+        }
+        .ms-rteTableEvenRow-SBRight {
+            .ms-rteTableEvenCol-SBRight {
+
+            }
+            .ms-rteTableOddCol-SBRight {
+
+            }
+        }
+    }*/
+/*table.ms-rteTable-BPLeft {
+        -ms-name: $display;
+
+        border: $handler_tableBorder;
+        td {
+            border: $handler_cellBorder;
+        }
+
+        .ms-rteTableHeaderRow-BPLeft {
+            th.ms-rteTableHeaderEvenCol-BPLeft {
+                font-weight: bold;
+            }
+            th.ms-rteTableHeaderOddCol-BPLeft {
+                font-weight: bold;
+            }
+        }
+        .ms-rteTableOddRow-BPLeft {
+            .ms-rteTableEvenCol-BPLeft {
+
+            }
+            .ms-rteTableOddCol-BPLeft {
+
+            }
+        }
+        .ms-rteTableEvenRow-BPLeft {
+            .ms-rteTableEvenCol-BPLeft {
+
+            }
+            .ms-rteTableOddCol-BPLeft {
+
+            }
+        }
+    }*/
+/*table.ms-rteTable-BPCenter {
+        -ms-name: $display;
+
+        border: $handler_tableBorder;
+        td {
+            border: $handler_cellBorder;
+        }
+
+        .ms-rteTableHeaderRow-BPCenter {
+            th.ms-rteTableHeaderEvenCol-BPCenter {
+                font-weight: bold;
+            }
+            th.ms-rteTableHeaderOddCol-BPCenter {
+                font-weight: bold;
+            }
+        }
+        .ms-rteTableOddRow-BPCenter {
+            .ms-rteTableEvenCol-BPCenter {
+
+            }
+            .ms-rteTableOddCol-BPCenter {
+
+            }
+        }
+        .ms-rteTableEvenRow-BPCenter {
+            .ms-rteTableEvenCol-BPCenter {
+
+            }
+            .ms-rteTableOddCol-BPCenter {
+
+            }
+        }
+    }*/
+/*table.ms-rteTable-BPRight {
+        -ms-name: $display;
+
+        border: $handler_tableBorder;
+        td {
+            border: $handler_cellBorder;
+        }
+
+        .ms-rteTableHeaderRow-BPRight {
+            th.ms-rteTableHeaderEvenCol-BPRight {
+                font-weight: bold;
+            }
+            th.ms-rteTableHeaderOddCol-BPRight {
+                font-weight: bold;
+            }
+        }
+        .ms-rteTableOddRow-BPRight {
+            .ms-rteTableEvenCol-BPRight {
+
+            }
+            .ms-rteTableOddCol-BPRight {
+
+            }
+        }
+        .ms-rteTableEvenRow-BPRight {
+            .ms-rteTableEvenCol-BPRight {
+
+            }
+            .ms-rteTableOddCol-BPRight {
+
+            }
+        }
+    }*/
+/*table.ms-rteTable-FAQ {
+        -ms-name: $display;
+
+        border: $handler_tableBorder;
+        td {
+            border: $handler_cellBorder;
+        }
+
+        .ms-rteTableHeaderRow-FAQ {
+            th.ms-rteTableHeaderEvenCol-FAQ {
+                font-weight: bold;
+            }
+            th.ms-rteTableHeaderOddCol-FAQ {
+                font-weight: bold;
+            }
+        }
+        .ms-rteTableOddRow-FAQ {
+            .ms-rteTableEvenCol-FAQ {
+
+            }
+            .ms-rteTableOddCol-FAQ {
+
+            }
+        }
+        .ms-rteTableEvenRow-FAQ {
+            .ms-rteTableEvenCol-FAQ {
+
+            }
+            .ms-rteTableOddCol-FAQ {
+
+            }
+        }
+    }*/
+P.nurtured-rte-Element-P {
+  -ms-name: "Paragraph";
+  -ms-element: "true"; }
+
+H1.nurtured-rte-Element-H1 {
+  -ms-name: "Heading 1";
+  -ms-element: "true"; }
+
+H2.nurtured-rte-Element-H2 {
+  -ms-name: "Heading 2";
+  -ms-element: "true"; }
+
+H3.nurtured-rte-Element-H3 {
+  -ms-name: "Heading 3";
+  -ms-element: "true"; }
+
+H1.nurtured-rte-Element-H1Green {
+  -ms-name: "Heading 1 Green"; }
+
+H2.nurtured-rte-Element-H2Green {
+  -ms-name: "Heading 2 Green"; }
+
+H3.nurtured-rte-Element-H3Green {
+  -ms-name: "Heading 3 Green"; }
+
+H1.nurtured-rte-Element-H1DarkGrey {
+  -ms-name: "Heading 1 Dark Grey"; }
+
+H2.nurtured-rte-Element-H2DarkGrey {
+  -ms-name: "Heading 2 Dark Grey"; }
+
+H3.nurtured-rte-Element-H3DarkGrey {
+  -ms-name: "Heading 3 Dark Grey"; }
+
+H1.nurtured-rte-Element-H1LightGrey {
+  -ms-name: "Heading 1 Light Grey"; }
+
+H2.nurtured-rte-Element-H2LightGrey {
+  -ms-name: "Heading 2 Light Grey"; }
+
+H3.nurtured-rte-Element-H3LightGrey {
+  -ms-name: "Heading 3 Light Grey"; }
+
+H1.nurtured-rte-Element-H1White {
+  -ms-name: "Heading 1 White"; }
+
+H2.nurtured-rte-Element-H2White {
+  -ms-name: "Heading 2 White"; }
+
+H3.nurtured-rte-Element-H3White {
+  -ms-name: "Heading 3 White"; }
+
+H1.nurtured-rte-Element-H1Red {
+  -ms-name: "Heading 1 Red"; }
+
+H2.nurtured-rte-Element-H2Red {
+  -ms-name: "Heading 2 Red"; }
+
+H3.nurtured-rte-Element-H3Red {
+  -ms-name: "Heading 3 Red"; }
+
+H1.nurtured-rte-Element-H1Black {
+  -ms-name: "Heading 1 Black"; }
+
+H2.nurtured-rte-Element-H2Black {
+  -ms-name: "Heading 2 Black"; }
+
+H3.nurtured-rte-Element-H3Black {
+  -ms-name: "Heading 3 Black"; }
+
+P.nurtured-rte-Element-PGreen {
+  -ms-name: "Paragraph Green"; }
+
+P.nurtured-rte-Element-PDarkGrey {
+  -ms-name: "Paragraph Dark Grey"; }
+
+P.nurtured-rte-Element-PLightGrey {
+  -ms-name: "Paragraph Light Grey"; }
+
+P.nurtured-rte-Element-PWhite {
+  -ms-name: "Paragraph White"; }
+
+P.nurtured-rte-Element-PRed {
+  -ms-name: "Paragraph Red"; }
+
+P.nurtured-rte-Element-PBlack {
+  -ms-name: "Paragraph Black"; }
+
+.nurtured-rte-Style-Normal {
+  -ms-name: "Normal"; }
+
+/*
+.nurtured-rte-ForeColor-1 {
+    -ms-name:"";
+    -ms-color:"Green";
+}
+.nurtured-rte-ForeColor-2 {
+    -ms-name:"";
+    -ms-color:"Dark Grey";
+}
+.nurtured-rte-ForeColor-3 {
+    -ms-name:"";
+    -ms-color:"White";
+}
+.nurtured-rte-ForeColor-4 {
+    -ms-name:"";
+    -ms-color:"Black";
+}
+.nurtured-rte-ForeColor-5 {
+    -ms-name:"";
+    -ms-color:"Light Grey";
+}
+.nurtured-rte-ForeColor-6 {
+    -ms-name:"";
+    -ms-color:"Red";
+}
+
+*/
+.nurtured-rte-Image-0 {
+  -ms-name: "No border"; }
+
+.nurtured-rte-Position-1 {
+  -ms-name: "Left";
+  float: left; }
+
+.nurtured-rte-Position-2 {
+  -ms-name: "Right";
+  float: right; }
+
+.nurtured-rte-Position-3 {
+  -ms-name: "Top";
+  vertical-align: text-top; }
+
+.nurtured-rte-Position-4 {
+  -ms-name: "Middle";
+  vertical-align: middle; }
+
+.nurtured-rte-Position-5 {
+  -ms-name: "Bottom";
+  vertical-align: text-bottom; }
+
+.nurtured-rte-Table-default {
+  -ms-name: "Default Table Style"; }
+
+/*.nurtured-rte-Table-Component {
+    border: $handler_tableBorder;
+
+    th, td {
+        border: $handler_cellBorder;
+    }
+
+    .nurtured-rte-TableHeaderRow-Component {
+        .nurtured-rte-TableHeaderFirstCol-Component {}        
+        .nurtured-rte-TableHeaderEvenCol-Component {}
+        .nurtured-rte-TableHeaderOddCol-Component {}
+        .nurtured-rte-TableHeaderLastCol-Component {}
+    }
+    .nurtured-rte-TableOddRow-Component {
+        .nurtured-rte-TableFirstCol-Component {}
+        .nurtured-rte-TableEvenCol-Component {}
+        .nurtured-rte-TableOddCol-Component {}
+        .nurtured-rte-TableLastCol-Component {}
+    }
+    .nurtured-rte-TableEvenRow-Component {
+        .nurtured-rte-TableFirstCol-Component {}
+        .nurtured-rte-TableEvenCol-Component {}
+        .nurtured-rte-TableOddCol-Component {}
+        .nurtured-rte-TableLastCol-Component {}
+    }
+    .nurtured-rte-TableFooterRow-Component {
+        .nurtured-rte-TableFooterFirstCol-Component {}
+        .nurtured-rte-TableFooterEvenCol-Component {}
+        .nurtured-rte-TableFooterOddCol-Component {}
+        .nurtured-rte-TableFooterLastCol-Component {}
+    }
+}*/
+.nurtured-rte-Language-th {
+  -ms-name: "Thai"; }
+
+.nurtured-rte-Language-en {
+  -ms-name: "English"; }
+
+.nurtured-rte-Language-zh-HanS {
+  -ms-name: "Chinese Simplified"; }
+
+.nurtured-rte-Language-zh-HanT {
+  -ms-name: "Chinese Traditional"; }
+
+.nurtured-rte-Language-ja {
+  -ms-name: "Japanese"; }
+
+
+.nurtured-rte-Element-H1Green,
+.nurtured-rte-Element-H2Green,
+.nurtured-rte-Element-H3Green,
+.nurtured-rte-Element-PGreen,
+.nurtured-rte-ForeColor-1 {
+  color: #00a950; }
+  .section .nurtured-rte-Element-H1Green, .section
+  .nurtured-rte-Element-H2Green, .section
+  .nurtured-rte-Element-H3Green, .section
+  .nurtured-rte-Element-PGreen, .section
+  .nurtured-rte-ForeColor-1 {
+    color: #00a950; }
+
+.nurtured-rte-Element-H1DarkGrey,
+.nurtured-rte-Element-H2DarkGrey,
+.nurtured-rte-Element-H3DarkGrey,
+.nurtured-rte-Element-PDarkGrey,
+.nurtured-rte-ForeColor-2 {
+  color: #333; }
+  .section .nurtured-rte-Element-H1DarkGrey, .section
+  .nurtured-rte-Element-H2DarkGrey, .section
+  .nurtured-rte-Element-H3DarkGrey, .section
+  .nurtured-rte-Element-PDarkGrey, .section
+  .nurtured-rte-ForeColor-2 {
+    color: #333 !important; }
+
+.nurtured-rte-Element-H1White,
+.nurtured-rte-Element-H2White,
+.nurtured-rte-Element-H3White,
+.nurtured-rte-Element-PWhite,
+.nurtured-rte-ForeColor-3 {
+  color: #fff; }
+  .section .nurtured-rte-Element-H1White, .section
+  .nurtured-rte-Element-H2White, .section
+  .nurtured-rte-Element-H3White, .section
+  .nurtured-rte-Element-PWhite, .section
+  .nurtured-rte-ForeColor-3 {
+    color: #fff; }
+
+.nurtured-rte-Element-H1,
+.nurtured-rte-Element-H2,
+.nurtured-rte-Element-H3,
+.nurtured-rte-Element-P,
+.nurtured-rte-ForeColor-4 {
+  color: #333; }
+  .section .nurtured-rte-Element-H1, .section
+  .nurtured-rte-Element-H2, .section
+  .nurtured-rte-Element-H3, .section
+  .nurtured-rte-Element-P, .section
+  .nurtured-rte-ForeColor-4 {
+    color: #333; }
+
+.nurtured-rte-Element-H1LightGrey,
+.nurtured-rte-Element-H2LightGrey,
+.nurtured-rte-Element-H3LightGrey,
+.nurtured-rte-Element-PLightGrey,
+.nurtured-rte-ForeColor-5 {
+  color: #777; }
+  .section .nurtured-rte-Element-H1LightGrey, .section
+  .nurtured-rte-Element-H2LightGrey, .section
+  .nurtured-rte-Element-H3LightGrey, .section
+  .nurtured-rte-Element-PLightGrey, .section
+  .nurtured-rte-ForeColor-5 {
+    color: #777; }
+
+.nurtured-rte-Element-H1Red,
+.nurtured-rte-Element-H2Red,
+.nurtured-rte-Element-H3Red,
+.nurtured-rte-Element-PRed,
+.nurtured-rte-ForeColor-6 {
+  color: #ed1b2e; }
+  .section .nurtured-rte-Element-H1Red, .section
+  .nurtured-rte-Element-H2Red, .section
+  .nurtured-rte-Element-H3Red, .section
+  .nurtured-rte-Element-PRed, .section
+  .nurtured-rte-ForeColor-6 {
+    color: #ed1b2e; }
+
+.nurtured-rte-Element-H1Green,
+.nurtured-rte-Element-H2Green,
+.nurtured-rte-Element-H3Green,
+.nurtured-rte-Element-H1DarkGrey,
+.nurtured-rte-Element-H2DarkGrey,
+.nurtured-rte-Element-H3DarkGrey,
+.nurtured-rte-Element-H1LightGrey,
+.nurtured-rte-Element-H2LightGrey,
+.nurtured-rte-Element-H3LightGrey,
+.nurtured-rte-Element-H1White,
+.nurtured-rte-Element-H2White,
+.nurtured-rte-Element-H3White,
+.nurtured-rte-Element-H1Red,
+.nurtured-rte-Element-H2Red,
+.nurtured-rte-Element-H3Red,
+.nurtured-rte-Element-H1Black,
+.nurtured-rte-Element-H2Black,
+.nurtured-rte-Element-H3Black,
+.nurtured-rte-Element-H1,
+.nurtured-rte-Element-H2,
+.nurtured-rte-Element-H3 {
+  margin: 15px 0 !important; }
+
+.nurtured-rte-Element-PGreen,
+.nurtured-rte-Element-PDarkGrey,
+.nurtured-rte-Element-PLightGrey,
+.nurtured-rte-Element-PWhite,
+.nurtured-rte-Element-PRed,
+.nurtured-rte-Element-PBlack,
+.nurtured-rte-Element-P {
+  margin: 10px 0 !important; }
+
+.nurtured-edit-mode-panel {
+  background-color: #f2f2f2; }
+  .nurtured-edit-mode-panel .KWebPageComponentContainer {
+    margin: 15px -15px;
+    padding: 0 15px; }
+    .nurtured-edit-mode-panel .KWebPageComponentContainer > [data-name^='KWebPageComponent']::before {
+      content: attr(data-label);
+      font-size: 26px;
+      color: #000; }
+    .nurtured-edit-mode-panel .KWebPageComponentContainer > [data-name^='KWebPageComponent']::after {
+      content: attr(data-instruction); }
+    .nurtured-edit-mode-panel .KWebPageComponentContainer::after {
+      content: "";
+      display: table;
+      height: 1px;
+      clear: both; }
+    .nurtured-edit-mode-panel .KWebPageComponentContainer:nth-child(2n+0) {
+      background-color: #ccc; }
+  .nurtured-edit-mode-panel [data-name='KWebPageComponentType'] {
+    float: left; }
+  .nurtured-edit-mode-panel [data-name='KWebPageComponentOrder'] {
+    float: right; }
+  .nurtured-edit-mode-panel [data-name='KWebPageComponentPadding'] {
+    float: right; }
+  .nurtured-edit-mode-panel [data-name='KWebPageComponentHTML']::before {
+    content: "";
+    display: table;
+    height: 1px;
+    clear: both; }
+  .nurtured-edit-mode-panel .ms-rtestate-field[id$="RichImageField"] img,
+  .nurtured-edit-mode-panel [data-name='KWebPageComponentImage'] img {
+    width: 100%; }
+  .nurtured-edit-mode-panel .ms-rtestate-write[contenteditable="true"] {
+    background-color: #fff;
+    border: 1px solid #eee;
+    padding: 5px 15px; }
+  .nurtured-edit-mode-panel .nurtured-rte-Element-H1White,
+  .nurtured-edit-mode-panel .nurtured-rte-Element-H2White,
+  .nurtured-edit-mode-panel .nurtured-rte-Element-H3White,
+  .nurtured-edit-mode-panel .nurtured-rte-Element-PWhite {
+    text-shadow: 1px 1px #ccc; }
+  .nurtured-edit-mode-panel .nurtured-rte-Table-default th, .nurtured-edit-mode-panel .nurtured-rte-Table-default td {
+    border: 1px dashed #666; }
+  .nurtured-edit-mode-panel li {
+    list-style-position: outside; }
+  .nurtured-edit-mode-panel ul, .nurtured-edit-mode-panel ol {
+    margin-left: 1.3em; }
+  .nurtured-edit-mode-panel ul li {
+    list-style-type: disc; }
+  .nurtured-edit-mode-panel ol li {
+    list-style-type: decimal; }
+
+.nurtured-HiddenFromView {
+  display: none; }
+
+section.section[data-component="TextBlock"] + section.section[data-component="ShowMoreTextBlock"] {
+  margin-top: -200px; }
+
+
+
+
+@media screen and (max-width: 991px) {
+  [class^="nurtured-rte-ForeColor"] {
+    color: #333; }
+    .section.section-tiles [class^="nurtured-rte-ForeColor"] {
+      color: #fff; }
+  .section.section-bg-fixed [class^="nurtured-rte-Element"],
+  .section.section-bg-fixed [class^="nurtured-rte-ForeColor"],
+  .section.section-bg [class^="nurtured-rte-Element"],
+  .section.section-bg [class^="nurtured-rte-ForeColor"] {
+    color: #333; }
+  .section.section-highlight [class^="nurtured-rte-Element"],
+  .section.section-highlight [class^="nurtured-rte-ForeColor"] {
+    color: #FFFFFF; }
+  .section.section-highlight [class$="LightGrey"] {
+    color: #777; }
+  section.section[data-component="TextBlock"] + section.section[data-component="ShowMoreTextBlock"] {
+    margin-top: -100px; } }
+	
+	@media screen and (max-width: 767px) {
+  .section.section-highlight [class^="nurtured-rte-Element"],
+  .section.section-highlight [class^="nurtured-rte-ForeColor"] {
+    color: #333; }
+	}
+
+
+    @media screen and (max-width: 991px) {
+    .nurtured-rte-Element-H2Green {
+    
+        color:#00a950 !important;
+    }
+    }
+    @media screen and (max-width: 767px) {
+        .nurtured-rte-Element-H2Green {
+    
+            color:#00a950 !important;
+        }
+    }
+
+    @media screen and ( device-width: 767px ) {
+        .section .nurtured-rte-Element-H1Green,.nurtured-rte-Element-H2Green {
+            color: #00a950 !important;
+        }
+    }
+
+    @media screen and (max-width: 991px) {
+        .section .nurtured-rte-Element-H1Green,.nurtured-rte-Element-H2Green {
+            color: #00a950 !important;
+        }
+    
+    }

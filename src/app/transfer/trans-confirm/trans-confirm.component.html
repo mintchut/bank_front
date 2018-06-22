@@ -1,0 +1,71 @@
+<div style="background: linear-gradient(to bottom, #07A94D 0%, #ffffff 100%);">
+
+    <br>
+    <a href="https://www.kasikornbank.com">
+      <img width="300" alt="Kbank Logo" src="\assets\kbank-header.png" style="margin-left: 2%">
+    </a>
+    <br>
+    <br>
+  </div>
+  
+<div style="text-align: center; vertical-align: middle;">
+  <h2 style="margin-top:0px;color: #99867C;">
+    <img width="25" alt="pp Logo" src="\assets\check.png">
+    <br>
+    <b>Transaction Confirmation</b>
+  </h2>
+
+  <div class="text_group">
+    <label for="acname">
+      <b>From
+        <span class='data'>{{name}}</span>
+      </b>
+    </label>
+    <br>
+    <label for="acnumber">
+      <b>
+        <span class='data'>
+          <img width="20" alt="Kbank Logo" src="\assets\logo.png"> {{account}}</span>
+      </b>
+    </label>
+    <br>
+    <br>
+
+    <label for="recacname">
+      <b>To
+        <span class='data' align="center">{{recname}}</span>
+      </b>
+    </label>
+    <br>
+    <label for="recnumber">
+      <b>
+        <span class='data'>{{recnumber}}</span>
+      </b>
+    </label>
+    <br>
+    <br>
+    <label for="type">
+      <b>account type :
+        <span class='data'>{{rectype}}</span>
+      </b>
+    </label>
+    <br>
+    <br>
+
+    <label for="transAmount">
+      <b>Amount :
+        <span class='data'>{{transAmount}} </span>
+      </b>
+    </label>
+    <br>
+    <br>
+
+    <button class="backbtn" (click)="clickBack();">
+      <span>Back</span>
+    </button>
+    <button type="submit" class="nextbtn" (click)="clickNext();">
+      <span>Next</span>
+    </button>
+  </div>
+
+</div>

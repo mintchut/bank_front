@@ -1,0 +1,155 @@
+// component css goes 
+.backbtn {
+  background-color: #00a950;
+  /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 25px;
+  display: inline-block;
+  font-size: 13px;
+}
+
+.data {
+  float: right;
+  text-align: right;
+}
+
+.text_group {
+  text-align: left;
+  border: 0ch;
+  width: 30%;
+  margin-left: 33%;
+  background: rgb(255, 255, 255);
+  padding: 2%;
+  -webkit-box-shadow: 15px 15px 78px 3px rgba(74, 74, 74, 0.5);
+  -moz-box-shadow: 15px 15px 78px 3px rgba(74, 74, 74, 0.5);
+  box-shadow: 15px 15px 78px 3px rgba(74, 74, 74, 0.5);
+}
+
+.head {
+  text-align: center;
+}
+
+.nextbtn {
+  float: right;
+  border: none;
+  text-align: center;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+  background-color: #00a950;
+  /* Green */
+  border: none;
+  color: white;
+  padding: 15px;
+  text-decoration: none;
+  border-radius: 25px;
+  display: inline-block;
+  font-size: 13px;
+}
+
+.nextbtn span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.nextbtn span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.nextbtn:hover span {
+  padding-right: 25px;
+}
+
+.nextbtn:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+.backbtn {
+  border: none;
+  text-align: center;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+  background-color: #00a950;
+  /* Green */
+  border: none;
+  color: white;
+  padding: 15px;
+  text-decoration: none;
+  border-radius: 25px;
+  display: inline-block;
+  font-size: 13px;
+}
+
+.backbtn span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.backbtn span:after {
+  content: '\00ab';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  left: -20px;
+  transition: 0.5s;
+}
+
+.backbtn:hover span {
+  padding-left: 25px;
+}
+
+.backbtn:hover span:after {
+  opacity: 1;
+  left: 0;
+}
+
+#typeSelect {
+  float: right;
+}
+
+#typeSelect label {
+  float: right;
+  margin: auto;
+  width: 120px;
+  height: 30px;
+  margin-left: 5px;
+  border-radius: 13px;
+  border: 2px solid #00a950;
+  overflow: auto;
+  padding: 5px;
+}
+
+#typeSelect label span {
+  text-align: center;
+  border-radius: 10px;
+  font-size: 16px;
+  display: block;
+  width: 120px;
+  height: 30px;
+  line-height: 30px;
+}
+
+#typeSelect label input {
+  position: absolute;
+  top: -20px;
+}
+
+#typeSelect input:checked+span {
+  background-color: #00a950;
+  color: white;
+}

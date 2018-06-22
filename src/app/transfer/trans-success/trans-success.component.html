@@ -1,0 +1,77 @@
+<div style="background: linear-gradient(to bottom, #07A94D 0%, #ffffff 100%);">
+
+    <br>
+    <a href="https://www.kasikornbank.com">
+      <img width="300" alt="Kbank Logo" src="\assets\kbank-header.png" style="margin-left: 2%">
+    </a>
+    <br>
+    <br>
+  </div>
+
+<div style="text-align: center; aligh:middle;vertical-align: middle;">
+  <h2 style="margin-top:0px;color: #99867C;">
+    <img width="25" alt="pp Logo" src="\assets\success.png">
+    <br>
+    <b>Transaction Success</b>
+  </h2>
+  <label for="TransDTM">
+    <b>Transaction time : {{transDTM}} </b>
+  </label>
+  <br>
+  <br>
+
+  <div class="text_group">
+    <label for="acname">
+      <b>From
+        <span class='data'>{{name}}</span>
+      </b>
+    </label>
+    <br>
+    <label for="acnumber">
+      <b>
+        <span class='data'>
+          <img width="20" alt="Kbank Logo" src="\assets\logo.png"> {{account}}</span>
+      </b>
+    </label>
+    <br>
+    <br>
+
+    <label for="recacname">
+      <b>To
+        <span class='data' align="center">{{recname}}</span>
+      </b>
+    </label>
+    <br>
+    <label for="recnumber">
+      <b>
+        <span class='data'>{{recaccount}}</span>
+      </b>
+    </label>
+   
+    <br>
+    <br>
+
+    <label for="transAmount">
+      <b>Amount :
+        <span class='data'>{{transAmount}} </span>
+      </b>
+    </label>
+    <br>
+    <br>
+    <label for="balanceAmount">
+      <b>Balance :
+        <span class='data'>{{balanceAmount}} </span>
+      </b>
+    </label>
+    <br>
+    <br>
+    <label for="note">
+      <b>Note :
+        <span class='data'>{{note}} </span>
+      </b>
+    </label>
+
+  </div>
+  <br>
+  <button class="backbtn" (click)="clickBack();">Back</button>
+</div>

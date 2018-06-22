@@ -1,0 +1,55 @@
+<div style="background: linear-gradient(to bottom, #07A94D 0%, #ffffff 100%);">
+
+    <br>
+    <a href="https://www.kasikornbank.com">
+      <img width="300" alt="Kbank Logo" src="\assets\kbank-header.png" style="margin-left: 2%">
+    </a>
+    <br>
+    <br>
+  </div>
+<div style="text-align: center; vertical-align: middle;">
+  <h2 style="margin-top:0px;">
+    <img width="25" alt="pp Logo" src="\assets\success.png">
+    <br>
+    <b>Cancellation Success</b>
+  </h2>
+  <p style="color: gray;">Your account is unlinked from Prompt pay.</p>
+
+  <div class="text_group">
+    <label for="acname">
+      <b>Bank Account :
+        <span class='data'>{{name}}</span>
+      </b>
+    </label>
+    <br>
+    <label for="acnumber">
+      <b>
+        <span class='data'>
+          <img width="20" alt="Kbank Logo" src="\assets\logo.png"> {{account}}</span>
+      </b>
+    </label>
+    <br>
+    <br>
+    <span class='data' style="margin-right: 5%">
+      <img width="50" alt="Kbank Logo" src="\assets\cut.png">
+    </span>
+    <br>
+    <br>
+    <br>
+    <br>
+    <label for="type">
+      <b>Prompt Pay account :
+        <span class='data'>{{num}}
+          <br>{{type}}</span>
+      </b>
+    </label>
+    <br>
+    <br>
+    <br>
+    <b>Cancellation time :
+      <span class='data'>{{cancelDTM}}</span>
+    </b>
+  </div>
+  <br>
+  <button class="backbtn" (click)="clickBack();">Back</button>
+</div>
